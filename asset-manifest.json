@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/reactFrontEnd/static/css/main.727bf8a3.css",
-    "main.js": "/reactFrontEnd/static/js/main.22898517.js",
+    "main.js": "/reactFrontEnd/static/js/main.fafb76cd.js",
     "static/js/787.28cb0dcd.chunk.js": "/reactFrontEnd/static/js/787.28cb0dcd.chunk.js",
     "static/media/Login.svg": "/reactFrontEnd/static/media/Login.0e6cc29b1a73c93b8dbd97a477df5d41.svg",
     "static/media/4.svg": "/reactFrontEnd/static/media/4.bd78f80107e4edfafd89.svg",
@@ -53,11 +53,11 @@
     "static/media/17.svg": "/reactFrontEnd/static/media/17.112b8282cbf32ce5c133.svg",
     "index.html": "/reactFrontEnd/index.html",
     "main.727bf8a3.css.map": "/reactFrontEnd/static/css/main.727bf8a3.css.map",
-    "main.22898517.js.map": "/reactFrontEnd/static/js/main.22898517.js.map",
+    "main.fafb76cd.js.map": "/reactFrontEnd/static/js/main.fafb76cd.js.map",
     "787.28cb0dcd.chunk.js.map": "/reactFrontEnd/static/js/787.28cb0dcd.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.727bf8a3.css",
-    "static/js/main.22898517.js"
+    "static/js/main.fafb76cd.js"
   ]
 }
