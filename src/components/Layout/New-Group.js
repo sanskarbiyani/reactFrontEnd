@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Card,
   Grid,
@@ -11,29 +11,26 @@ import {
   Dialog,
   DialogContent,
   DialogContentText,
-  DialogActions
-
-} from '@mui/material'
-import * as MuiIcons from '@mui/icons-material'
-import { NavLink, useNavigate } from "react-router-dom";
-import PropTypes from 'prop-types';
-import { styled } from '@mui/material/styles';
-import TreeView from '@mui/lab/TreeView';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import TreeItem, {
-  treeItemClasses
-} from '@mui/lab/TreeItem';
+  DialogActions,
+} from "@mui/material";
+import * as MuiIcons from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
+import PropTypes from "prop-types";
+import { styled } from "@mui/material/styles";
+import TreeView from "@mui/lab/TreeView";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import TreeItem, { treeItemClasses } from "@mui/lab/TreeItem";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Form } from '../ControlFields/Form'
-import { useForm } from 'react-hook-form';
-import { PrimaryButton } from '../ControlFields/SubmitButton';
-import { Input } from '../ControlFields/TextField';
-import { useSnackbar } from 'notistack';
-import axiosInstance from '../../axois';
-import Typography from '@mui/material/Typography';
-import { Delete } from '@mui/icons-material';
+import { Form } from "../ControlFields/Form";
+import { useForm } from "react-hook-form";
+import { PrimaryButton } from "../ControlFields/SubmitButton";
+import { Input } from "../ControlFields/TextField";
+import { useSnackbar } from "notistack";
+import axiosInstance from "../../axois";
+import Typography from "@mui/material/Typography";
+import { Delete } from "@mui/icons-material";
 
 const StyledTreeItemRoot = styled(TreeItem)(({ theme }) => ({
   color: theme.palette.text.secondary,
@@ -43,19 +40,19 @@ const StyledTreeItemRoot = styled(TreeItem)(({ theme }) => ({
     borderBottomRightRadius: theme.spacing(2),
     paddingRight: theme.spacing(1),
     fontWeight: theme.typography.fontWeightMedium,
-    '&.Mui-expanded': {
+    "&.Mui-expanded": {
       fontWeight: theme.typography.fontWeightRegular,
     },
-    '&:hover': {
+    "&:hover": {
       backgroundColor: theme.palette.action.hover,
     },
-    '&.Mui-focused, &.Mui-selected, &.Mui-selected.Mui-focused': {
+    "&.Mui-focused, &.Mui-selected, &.Mui-selected.Mui-focused": {
       backgroundColor: `var(--tree-view-bg-color, ${theme.palette.action.selected})`,
-      color: 'var(--tree-view-color)',
+      color: "var(--tree-view-color)",
     },
     [`& .${treeItemClasses.label}`]: {
-      fontWeight: 'inherit',
-      color: 'inherit',
+      fontWeight: "inherit",
+      color: "inherit",
     },
   },
   [`& .${treeItemClasses.group}`]: {
@@ -70,8 +67,7 @@ const schema = yup.object().shape({
   name: yup
     .string()
     .matches(/^([^0-9]*)$/, "First name should not contain numbers")
-    .required("First name is a required field")
-  ,
+    .required("First name is a required field"),
 });
 
 export const NewGroupEntry = ({ onChange }) => {
@@ -84,15 +80,20 @@ export const NewGroupEntry = ({ onChange }) => {
 
   const { enqueueSnackbar } = useSnackbar();
   const [data, setValues] = useState({
-    name: '',
-
+    name: "",
   });
 
-  const { register, handleSubmit, setValue, control, formState: { errors } } = useForm({
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    control,
+    formState: { errors },
+  } = useForm({
     defaultValues: { ...data },
     mode: "onBlur",
     resolver: yupResolver(schema),
-  })
+  });
 
   function StyledTreeItem(props) {
     const [open, setOpen] = React.useState(false);
@@ -116,14 +117,21 @@ export const NewGroupEntry = ({ onChange }) => {
     return (
       <StyledTreeItemRoot
         label={
-          <Box sx={{ display: 'flex', alignItems: 'center', p: 0.5, pr: 0 }}>
+          <Box sx={{ display: "flex", alignItems: "center", p: 0.5, pr: 0 }}>
             <Box component={LabelIcon} color={bgColor} sx={{ mr: 1 }} />
-            <Typography variant="body2" sx={{ fontWeight: 'inherit', flexGrow: 1 }}>
+            <Typography
+              variant="body2"
+              sx={{ fontWeight: "inherit", flexGrow: 1 }}
+            >
               {labelText}
             </Typography>
-            {labelInfo === 'yes' ? <Button style={{ color: 'red' }} onClick={handleClickOpen}>
-              <Delete fontSize='small' />
-            </Button> : ''}
+            {labelInfo === "yes" ? (
+              <Button style={{ color: "red" }} onClick={handleClickOpen}>
+                <Delete fontSize="small" />
+              </Button>
+            ) : (
+              ""
+            )}
             <Dialog
               open={open}
               onClose={handleClose}
@@ -132,26 +140,40 @@ export const NewGroupEntry = ({ onChange }) => {
               style={{ padding: 20 }}
             >
               <DialogContent style={{ height: 80, width: 300 }}>
-                <DialogContentText id="alert-dialog-description" style={{ fontSize: '25px', textAlign: 'center' }}>
+                <DialogContentText
+                  id="alert-dialog-description"
+                  style={{ fontSize: "25px", textAlign: "center" }}
+                >
                   Delete Group?
                 </DialogContentText>
               </DialogContent>
               <DialogActions>
-                <Button color="warning" style={{ color: '#ff0000', fontSize: "20px", width: 160 }} onClick={handleClose}>Cancel</Button>
-                <Button color="warning" style={{ color: '#00ff00', fontSize: "20px", width: 160 }} onClick={() => {
-                  axiosInstance
-                    .delete(`allGroups/${labelText}/`)
-                    .then((res) => {
-                      enqueueSnackbar(`${labelText} Delete Successfully`, {
-                        variant: 'error',
+                <Button
+                  color="warning"
+                  style={{ color: "#ff0000", fontSize: "20px", width: 160 }}
+                  onClick={handleClose}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  color="warning"
+                  style={{ color: "#00ff00", fontSize: "20px", width: 160 }}
+                  onClick={() => {
+                    axiosInstance
+                      .delete(`allGroups/${labelText}/`)
+                      .then((res) => {
+                        enqueueSnackbar(`${labelText} Delete Successfully`, {
+                          variant: "error",
+                        });
+                        fetchData();
                       })
-                      fetchData()
-                    })
-                    .catch(e => {
-                      console.log(e)
-                    })
-                  handleClose()
-                }} autoFocus>
+                      .catch((e) => {
+                        console.log(e);
+                      });
+                    handleClose();
+                  }}
+                  autoFocus
+                >
                   Confirm
                 </Button>
               </DialogActions>
@@ -159,8 +181,8 @@ export const NewGroupEntry = ({ onChange }) => {
           </Box>
         }
         style={{
-          '--tree-view-color': color,
-          '--tree-view-bg-color': undefined,
+          "--tree-view-color": color,
+          "--tree-view-bg-color": undefined,
         }}
         {...other}
       />
@@ -176,66 +198,70 @@ export const NewGroupEntry = ({ onChange }) => {
   };
 
   const onSubmit = (data) => {
-
-    console.log(JSON.stringify(data, null, 2))
-    setValues(data)
+    console.log(JSON.stringify(data, null, 2));
+    setValues(data);
     axiosInstance
-      .post('allGroups/', {
+      .post("allGroups/", {
         name: data.name,
       })
       .then((response) => {
         // alert(response.data);
-        enqueueSnackbar('response.data', {
-          variant: 'success',
-        })
-        fetchData()
+        enqueueSnackbar("response.data", {
+          variant: "success",
+        });
+        fetchData();
         // onChange({modelname:data.name,description:data.description,disable:false,color:data.color,icon:data.icon})
-      }).catch((e) => {
+      })
+      .catch((e) => {
         enqueueSnackbar("List Already Exists", {
-          variant: 'error',
-        })
+          variant: "error",
+        });
         // history.push('/');
       });
-    // localStorage.setItem("fields", null); 
+    // localStorage.setItem("fields", null);
     // localStorage.removeItem("fields");
     // history.push('/data/'+data.name)
-  }
+  };
 
   const fetchData = useCallback(async () => {
     axiosInstance
-      .get('allGroups')
+      .get("allGroups")
       .then((res) => {
         settreeData(res.data);
         console.log(res.data);
-      }).catch(e => {
-        alert("Refresh Page")
       })
+      .catch((e) => {
+        alert("Refresh Page");
+      });
   }, []);
   useEffect(() => {
-
-    fetchData()
-
-  }, [])
+    fetchData();
+  }, []);
   const navigate = useNavigate();
 
   const handleListOpen = (event) => {
     // localStorage
     // navigate(`/display-list-data/`)
-    console.log('Calleed.')
+    console.log("Calleed.");
     console.log(event.target);
-  }
+  };
   return (
     <Container maxWidth="xl">
       <Form onSubmit={handleSubmit(onSubmit)}>
-        <Card elevation={1} style={{ justifyContent: 'center' }}>
-          <Paper style={{ height: 550, overflow: 'auto', border: 1 }}>
+        <Card elevation={1} style={{ justifyContent: "center" }}>
+          <Paper style={{ height: 550, overflow: "auto", border: 1 }}>
             <CardContent>
-              <Grid container >
-                <Grid item xs={5} style={{ marginTop: 70 }} >
-                  <Grid container rowspacing={2} columnspacing={{ xs: 0, sm: 0, md: 0 }} spacing={2}  >
+              <Grid container>
+                <Grid item xs={5} style={{ marginTop: 70 }}>
+                  <Grid
+                    container
+                    rowspacing={2}
+                    columnspacing={{ xs: 0, sm: 0, md: 0 }}
+                    spacing={2}
+                  >
                     <Grid item xs={12}>
                       <Input
-                        {...register('name')}
+                        {...register("name")}
                         id="name"
                         type="text"
                         label="Group Name"
@@ -244,19 +270,18 @@ export const NewGroupEntry = ({ onChange }) => {
                         helperText={errors?.name?.message}
                       />
                     </Grid>
-                    <Grid item xs={5} >
-                      <Paper>
-                      </Paper>
+                    <Grid item xs={5}>
+                      <Paper></Paper>
                     </Grid>
-                    <Grid item xs={7} >
+                    <Grid item xs={7}>
                       <Box
                         sx={{
-                          display: 'flex',
-                          justifyContent: 'flex-end',
-                          p: 2
+                          display: "flex",
+                          justifyContent: "flex-end",
+                          p: 2,
                         }}
                       >
-                        <Grid container direction="row-reverse" spacing={2} >
+                        <Grid container direction="row-reverse" spacing={2}>
                           {/* <Grid item >
                             <PrimaryButton
                                 color="secondary"
@@ -269,7 +294,7 @@ export const NewGroupEntry = ({ onChange }) => {
                             <PrimaryButton
                               color="primary"
                               variant="contained"
-                              type='submit'
+                              type="submit"
                             >
                               Create Group
                             </PrimaryButton>
@@ -279,30 +304,46 @@ export const NewGroupEntry = ({ onChange }) => {
                     </Grid>
                   </Grid>
                 </Grid>
-                <Divider orientation="vertical" style={{ marginLeft: 5, marginRight: 5 }} flexItem />
-                <Grid item xs={6} style={{ marginTop: 70 }} >
+                <Divider
+                  orientation="vertical"
+                  style={{ marginLeft: 5, marginRight: 5 }}
+                  flexItem
+                />
+                <Grid item xs={6} style={{ marginTop: 70 }}>
                   <TreeView
                     aria-label="icon expansion"
                     defaultCollapseIcon={<ExpandMoreIcon />}
                     defaultExpandIcon={<ChevronRightIcon />}
-                    sx={{ height: 240, flexGrow: 1, maxWidth: 'auto', position: 'relative' }}
+                    sx={{
+                      height: 240,
+                      flexGrow: 1,
+                      maxWidth: "auto",
+                      position: "relative",
+                    }}
                   >
-                    {
-                      Object.entries(treeData).map((data, index) => {
-                        return (
-                          <StyledTreeItem nodeId={`${index + 1}`} labelText={data[0]} labelInfo="yes">
-                            {
-                              Object.entries(data[1]).map((child) => {
-                                return (
-                                  <StyledTreeItem nodeId={`${(index + 1) * 10}`} labelText={child[1]['list__modelname']} bgColor={child[1]['list__color']} labelIcon={MuiIcons[child[1]['list__icon']]} onClick={ (event) => { handleListOpen(event) }} />
-                                )
-                              }
-                              )
-                            }
-                          </StyledTreeItem>
-                        )
-                      })
-                    }
+                    {Object.entries(treeData).map((data, index) => {
+                      return (
+                        <StyledTreeItem
+                          nodeId={`${index + 1}`}
+                          labelText={data[0]}
+                          labelInfo="yes"
+                        >
+                          {Object.entries(data[1]).map((child) => {
+                            return (
+                              <StyledTreeItem
+                                nodeId={`${(index + 1) * 10}`}
+                                labelText={child[1]["list__modelname"]}
+                                bgColor={child[1]["list__color"]}
+                                labelIcon={MuiIcons[child[1]["list__icon"]]}
+                                onClick={(event) => {
+                                  handleListOpen(event);
+                                }}
+                              />
+                            );
+                          })}
+                        </StyledTreeItem>
+                      );
+                    })}
                   </TreeView>
                 </Grid>
               </Grid>

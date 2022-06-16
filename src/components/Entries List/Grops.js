@@ -152,7 +152,7 @@ const Groups = ({ data, onChange, fetch, searchState, myRules }) => {
             return user['email']
         }
         catch (err) {
-            navigate('/login')
+            navigate('/authemtication/login')
         }
     }
 
@@ -356,7 +356,7 @@ const Groups = ({ data, onChange, fetch, searchState, myRules }) => {
                                                 console.log(lis)
                                                 dispatch({ type: GROUP_LIST, group_list: { group: selectedIndex, list: lis[0] } });
 
-                                                navigate(`/display-list-data`)
+                                                navigate(`/list/display-list-data`)
                                                 dispatch({ type: LISTNAME, listname: { modelname: lis[0], color: lis[2], icon: lis[1], description: lis[4] } });
                                             }} >
 
@@ -593,7 +593,7 @@ const Groups = ({ data, onChange, fetch, searchState, myRules }) => {
                                                 })
                                             console.log(lis)
                                             dispatch({ type: GROUP_LIST, group_list: { group: selectedIndex, list: lis[0] } });
-                                            navigate(`/display-list-data`)
+                                            navigate(`/list/display-list-data`)
                                             dispatch({ type: LISTNAME, listname: { modelname: lis[0], color: lis[2], icon: lis[1], description: lis[4] } });
                                         }}>
                                             <CardActionArea>
@@ -842,7 +842,7 @@ const Groups = ({ data, onChange, fetch, searchState, myRules }) => {
                                                         })
                                                     console.log(rec[0])
                                                     dispatch({ type: GROUP_LIST, group_list: { group: 'self', list: rec[0] } });
-                                                    navigate(`/display-list-data`)
+                                                    navigate(`/list/display-list-data`)
                                                     dispatch({ type: LISTNAME, listname: { modelname: rec[0], color: rec[1][0][2], icon: rec[1][0][1], description: rec[1][0][0] } });
                                                 }}
                                             >
@@ -1052,7 +1052,7 @@ const Groups = ({ data, onChange, fetch, searchState, myRules }) => {
                                                                             </DialogActions>
                                                                         </Dialog>
                                                                     </div>
-                                                                    <div>
+                                                                    {/* <div>
                                                                         <MenuItem
                                                                             key={4}
                                                                             onClick={async () => {
@@ -1114,7 +1114,7 @@ const Groups = ({ data, onChange, fetch, searchState, myRules }) => {
                                                                         >
                                                                             {'Pin List'}
                                                                         </MenuItem>
-                                                                    </div>
+                                                                    </div> */}
                                                                 </Menu>
                                                             </div>
                                                         }
@@ -1251,8 +1251,6 @@ export function LoadingGroups({ onChange }) {
             .then((res) => {
                 const allGroups = res.data;
                 const { email } = JSON.parse(localStorage.getItem('user'));
-                // console.log('Curr User Email: ', email);
-                // console.log(allGroups);
                 Object.entries(allGroups).map(entry => {
                     (entry[1].users).map(user => {
                         if (user[0] === email) {
@@ -1265,7 +1263,6 @@ export function LoadingGroups({ onChange }) {
                         return [...prev, entry[1].name + '  -Group'];
                     });
                 });
-                // console.log(newGroups);
                 axiosInstance
                     .get('user/listDetails/')
                     .then((res) => {
@@ -1282,18 +1279,14 @@ export function LoadingGroups({ onChange }) {
                     }).catch(
                         (e) => {
                             alert("Please Login First");
-                            navigate('/login');
+                            navigate('/authentication/login');
                         }
                     );
 
             })
             .catch((e) => {
-                // const user = JSON.parse(localStorage.getItem('user'))
-                // if (user && user.remember) {
-                //     const refreshToken = JSON.parse()
-                // }
                 alert("Please Login First");
-                navigate('/login');
+                navigate('/authentication/login');
             })
             ;
 

@@ -81,13 +81,16 @@ function Header(props) {
 
   useEffect(() => {
     console.log('Header loading.. please wait.');
-    const { email } = JSON.parse(localStorage.getItem('user'));
-    console.log(email)
-    axiosInstance.get(`getusername/${email}`)
-      .then((response) => {
-        setUsername(response.data.message);
-      })
-      .catch(err => console.error('Some error occured: ', err));
+    const userDetails = localStorage.getItem('user');
+    if (userDetails) {
+      const { email } = JSON.parse(userDetails);
+      console.log(email)
+      axiosInstance.get(`getusername/${email}`)
+        .then((response) => {
+          setUsername(response.data.message);
+        })
+        .catch(err => console.error('Some error occured: ', err));
+    }
   }, [])
 
   const handleOpenNavMenu = (event) => {
@@ -149,16 +152,16 @@ function Header(props) {
   }
   const handleClickOpen = () => {
     setOpen(true);
-};
-const handleClose = () => {
-  setOpen(false);
-};
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
   const getUser = () => {
     try {
       return user['email']
     }
     catch (err) {
-      navigate('/login')
+      navigate('/authentication/login')
     }
   }
 
@@ -256,7 +259,7 @@ const handleClose = () => {
                 {/* <MenuItem key={'Profile'} onClick={handleCloseUserMenu}>
                               <Typography textAlign="center">{'Profile'}</Typography>
                             </MenuItem> */}
-                <MenuItem key={'Logout'} onClick={handleCloseUserMenu} component={NavLink} to={"/logout"}>
+                <MenuItem key={'Logout'} onClick={handleCloseUserMenu} component={NavLink} to={"/authentication/logout"}>
                   <Typography textAlign="center">{'Logout'}</Typography>
                 </MenuItem>
               </Menu>
@@ -278,33 +281,33 @@ const handleClose = () => {
                     alignItems: 'center',
                   }
                 }}>
-                <Tab textColor="inherit" label="Dashboard" value="dashboard" className={classes.link} onClick={handleClickOpen}  />
+                <Tab textColor="inherit" label="Dashboard" value="dashboard" className={classes.link} onClick={handleClickOpen} />
                 <Dialog
                   open={open}
                   onClose={handleClose}
                   aria-labelledby="alert-dialog-title"
                   aria-describedby="alert-dialog-description"
                   style={{ padding: 20 }}
-              >
+                >
                   <DialogContent style={{ height: 80, width: 300 }}>
-                      <DialogContentText id="alert-dialog-description" style={{ fontSize: '25px', textAlign: 'center' }}>
-                          Go to Dashboard?
+                    <DialogContentText id="alert-dialog-description" style={{ fontSize: '25px', textAlign: 'center' }}>
+                      Go to Dashboard?
                       </DialogContentText>
                   </DialogContent>
                   <DialogActions>
-                      <Button color="warning" style={{ color: '#ff0000', fontSize: "20px", width: 160 }} onClick={handleClose}>Cancel</Button>
-                      <Button color="warning" style={{ color: '#00ff00', fontSize: "20px", width: 160 }} 
-                          component={NavLink} to={`/`}
-                       autoFocus>
-                          Confirm
+                    <Button color="warning" style={{ color: '#ff0000', fontSize: "20px", width: 160 }} onClick={handleClose}>Cancel</Button>
+                    <Button color="warning" style={{ color: '#00ff00', fontSize: "20px", width: 160 }}
+                      component={NavLink} to={`/`}
+                      autoFocus>
+                      Confirm
                       </Button>
                   </DialogActions>
-              </Dialog>
+                </Dialog>
                 {/* {props.permisssion && <Tab textColor="inherit" label="Fields" value="overview" className={classes.link} component={NavLink} to={`/list-dashboard`} />
                 } */}
-                <Tab textColor="inherit" label="Fields" value="overview" className={classes.link} component={NavLink} to={`/list-dashboard`} />
-                <Tab textColor="inherit" label="List" value="list" className={classes.link} component={NavLink} to={`/display-list-data`} />
-                <Tab textColor="inherit" label="Log History" value="log" className={classes.link} component={NavLink} to={`/log-entries`} />
+                <Tab textColor="inherit" label="Fields" value="overview" className={classes.link} component={NavLink} to={`/list/list-dashboard`} />
+                <Tab textColor="inherit" label="List" value="list" className={classes.link} component={NavLink} to={`/list/display-list-data`} />
+                <Tab textColor="inherit" label="Log History" value="log" className={classes.link} component={NavLink} to={`/list/log-entries`} />
                 {/* <Tab textColor="inherit"  label="Messages" value="messages" className={classes.link} disabled/>
                     <Tab textColor="inherit"  label="Archives" value="archives" className={classes.link} disabled/> */}
               </Tabs>
@@ -328,7 +331,7 @@ const handleClose = () => {
                 <Tab textColor="inherit" label="Dashboard" value="dashboard" className={classes.link} component={NavLink} to={"/"} />
                 <Tab textColor="inherit" label="List" value="list" className={classes.link} component={NavLink} to={`/create-new-list/self/${getUser()}`} />
                 <Tab textColor="inherit" label="Group" value="group" className={classes.link} component={NavLink} to={`/create-new-group`} />
-                <Tab textColor="inherit" label="Parser" value="parser" className={classes.link} component={NavLink} to={`parser/parse-through`} />
+                <Tab textColor="inherit" label="Parser" value="parser" className={classes.link} component={NavLink} to={`/parser/parse-through`} />
               </Tabs>
             </Grid>
           </AppBar>

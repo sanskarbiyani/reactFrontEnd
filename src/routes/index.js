@@ -1,13 +1,13 @@
 import { useRoutes } from "react-router-dom";
-import { useState, useCallback, useEffect } from "react";
-// routes
-// import MainRoutes from './MainRoutes';
+import { useState, useEffect } from "react";
+
+//   ROUTES
 import AuthenticationRoutes from "./AuthenticationRoutes";
 // import config from 'config';
 import MainRoutes from "./MainRoutes";
 import ListRoutes from "./listRoute";
 // ==============================|| ROUTING RENDER ||============================== //
-import axios from "axios";
+
 export default function ThemeRoutes() {
   let initFields;
 
@@ -23,15 +23,14 @@ export default function ThemeRoutes() {
     initFields = JSON.parse(localStorage.getItem("listname"));
   }
   const [listname, setListName] = useState([initFields]);
-  const [count, setCount] = useState(0);
   const ListNameChange = () => {
     console.log("dunckb");
   };
-
   useEffect(() => {
     ListNameChange();
   }, []);
 
+  console.log("heyy Would this log?");
   return useRoutes(
     MainRoutes({ listname: listname, changeList: ListNameChange }).concat(
       AuthenticationRoutes(),

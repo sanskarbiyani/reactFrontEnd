@@ -1,28 +1,9 @@
-
 import { Outlet } from 'react-router-dom';
-
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
-import AppBar from '@material-ui/core/AppBar';
-import Grid from '@material-ui/core/Grid';
-import IconButton from '@material-ui/core/IconButton';
-import Tab from '@material-ui/core/Tab';
-import Tabs from '@material-ui/core/Tabs';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import Main_logo from '../assets/Gallery Icons/APPLUS IDIADA.svg'
-import TextField from '@material-ui/core/TextField';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted'
-import SearchIcon from '@material-ui/icons/Search';
-import AccountIcon from '../assets/Gallery Icons/Profile Logo.svg'
-import { NavLink } from 'react-router-dom';
 import ListAlt from '@mui/icons-material/ListAlt';
 import { useParams } from 'react-router-dom';
-import PopOverMenu from '../components/ControlFields/Color Picker/PopOverMenu';
-import { Link, Tooltip } from '@material-ui/core';
-import TransitionsModal from '../components/Header/Share'
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 

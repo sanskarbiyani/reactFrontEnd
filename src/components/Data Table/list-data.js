@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from "react";
 import {
   Chip,
   Link,
@@ -16,42 +16,47 @@ import {
   Typography,
   Tooltip,
   Button,
-
-} from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import AddIcon from '@mui/icons-material/Add';
-import clsx from 'clsx';
+} from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import AddIcon from "@mui/icons-material/Add";
+import clsx from "clsx";
 import dateFormat from "dateformat";
-import axiosInstance from '../../axois';
-import Autocomplete from '@mui/material/Autocomplete';
-import { Form } from '../ControlFields/Form'
-import Skeleton from '@mui/material/Skeleton';
-import { useDispatch, useSelector } from 'react-redux';
-import Header from '../Header'
-import { NavLink } from 'react-router-dom';
-import AttachFileIcon from '@mui/icons-material/AttachFile';
-import EditIcon from '@mui/icons-material/Edit';
-import NumberFormat from 'react-number-format';
-import { DataGrid, GridActionsCellItem, GridToolbarContainer, GridToolbarExport, useGridApiRef } from '@mui/x-data-grid';
-import { useSnackbar } from 'notistack';
-import DeleteIcon from '@mui/icons-material/Delete';
-import * as MuiIcons from '@mui/icons-material'
-import PropTypes from 'prop-types';
-import { styled } from '@mui/material/styles';
-import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
-import CloseIcon from '@mui/icons-material/Close';
-import ReportShare from './views/report';
-import { setReceiver, setIsChatOpen } from '../../store/chatReducer';
+import axiosInstance from "../../axois";
+import Autocomplete from "@mui/material/Autocomplete";
+import { Form } from "../ControlFields/Form";
+import Skeleton from "@mui/material/Skeleton";
+import { useDispatch, useSelector } from "react-redux";
+import Header from "../Header";
+import { NavLink } from "react-router-dom";
+import AttachFileIcon from "@mui/icons-material/AttachFile";
+import EditIcon from "@mui/icons-material/Edit";
+import NumberFormat from "react-number-format";
+import {
+  DataGrid,
+  GridActionsCellItem,
+  GridToolbarContainer,
+  GridToolbarExport,
+  useGridApiRef,
+} from "@mui/x-data-grid";
+import { useSnackbar } from "notistack";
+import DeleteIcon from "@mui/icons-material/Delete";
+import * as MuiIcons from "@mui/icons-material";
+import PropTypes from "prop-types";
+import { styled } from "@mui/material/styles";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
+import CloseIcon from "@mui/icons-material/Close";
+import ReportShare from "./views/report";
+import { setReceiver, setIsChatOpen } from "../../store/chatReducer";
 
-const baseURL = "deleteField/"
+const baseURL = "deleteField/";
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
-  '& .MuiDialogContent-root': {
+  "& .MuiDialogContent-root": {
     padding: theme.spacing(2),
   },
-  '& .MuiDialogActions-root': {
+  "& .MuiDialogActions-root": {
     padding: theme.spacing(1),
   },
 }));
@@ -67,12 +72,13 @@ const BootstrapDialogTitle = (props) => {
           aria-label="close"
           onClick={onClose}
           sx={{
-            position: 'absolute',
+            position: "absolute",
             right: 8,
             top: 8,
             color: (theme) => theme.palette.grey[500],
           }}
-          size="large">
+          size="large"
+        >
           <CloseIcon />
         </IconButton>
       ) : null}
@@ -87,7 +93,7 @@ BootstrapDialogTitle.propTypes = {
 
 function timeDiffCalc(dateFuture, dateNow) {
   let diffInMilliSeconds = Math.abs(dateFuture - dateNow) / 1000;
-  let mili = dateFuture - dateNow
+  let mili = dateFuture - dateNow;
 
   // calculate days
   const days = Math.floor(diffInMilliSeconds / 86400);
@@ -102,55 +108,53 @@ function timeDiffCalc(dateFuture, dateNow) {
   diffInMilliSeconds -= minutes * 60;
 
   // console.log(days+" "+hours+" "+minutes)
-  let difference = '';
+  let difference = "";
 
   if (days > 0) {
-    difference += (days === 1) ? `${days} day, ` : `${days} days, `;
+    difference += days === 1 ? `${days} day, ` : `${days} days, `;
   }
 
-  difference += (hours === 0 || hours === 1) ? `${hours} hour, ` : `${hours} hours, `;
+  difference +=
+    hours === 0 || hours === 1 ? `${hours} hour, ` : `${hours} hours, `;
 
-  difference += (minutes === 0 || hours === 1) ? `${minutes} minutes` : `${minutes} minutes`;
+  difference +=
+    minutes === 0 || hours === 1 ? `${minutes} minutes` : `${minutes} minutes`;
 
-  if (mili < 0)
-    difference += ' past'
+  if (mili < 0) difference += " past";
   return difference;
 }
 export function fileDownload(url, filename) {
-
-  return axiosInstance.get(url, { responseType: 'blob' })
-    .then((response) => {
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', filename[filename.length - 1]);
-      document.body.appendChild(link);
-      link.click();
-    })
+  return axiosInstance.get(url, { responseType: "blob" }).then((response) => {
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", filename[filename.length - 1]);
+    document.body.appendChild(link);
+    link.click();
+  });
 }
 
 function importAll(r) {
   let images = {};
-  r.keys().map(item => { images[item.replace('./', '')] = r(item); });
+  r.keys().map((item) => {
+    images[item.replace("./", "")] = r(item);
+  });
   return images;
 }
 
 function getName(value) {
   try {
-    return value.split("/")[5]
-  }
-  catch (err) {
-
-  }
+    return value.split("/")[5];
+  } catch (err) {}
 }
 
 export function DisplayDataEntry({ onChange }) {
   // const { list,group } = useParams();
   const list_group = useSelector((state) => state.customization.group_list);
-  const connectedUsers = useSelector(state => state.chat.otherUsers);
-  let navigate = useNavigate()
+  const connectedUsers = useSelector((state) => state.chat.otherUsers);
+  let navigate = useNavigate();
   const dispatch = useDispatch();
-  const columsTypes = ['string', 'boolean', 'actions']
+  const columsTypes = ["string", "boolean", "actions"];
   const [open, setOpen] = React.useState(false);
   const [dateColumns, setDateColumns] = React.useState([]);
   const gridApiRef = useGridApiRef();
@@ -159,12 +163,8 @@ export function DisplayDataEntry({ onChange }) {
   const handleClose = () => {
     setOpen(false);
   };
-  const columns = [
-
-  ];
-  const collectionOfdata = [
-
-  ];
+  const columns = [];
+  const collectionOfdata = [];
   const [appState, setAppState] = useState({
     loading: true,
     cols: null,
@@ -172,7 +172,7 @@ export function DisplayDataEntry({ onChange }) {
     listHistory: null,
     original: [],
     option: [],
-    permisssion: false
+    permisssion: false,
   });
   // const [editRowsModel, setEditRowsModel] = React.useState({});
   const { enqueueSnackbar } = useSnackbar();
@@ -184,24 +184,24 @@ export function DisplayDataEntry({ onChange }) {
   useEffect(() => {
     console.log(appState.data);
     return () => {
-      console.log('Deleting Data');
-    }
+      console.log("Deleting Data");
+    };
   }, [appState.data]);
 
   useEffect(() => {
-    console.log('Loading...');
-    if (appState.cols){
+    console.log("Loading...");
+    if (appState.cols) {
       const dateCols = appState.cols.map((col) => {
-        if (col.hasOwnProperty('type')){
-          if (col['type'] === 'dateTime'){
-            console.log('Date Time Field Found.');
+        if (col.hasOwnProperty("type")) {
+          if (col["type"] === "dateTime") {
+            console.log("Date Time Field Found.");
             console.log(col);
-            setDateColumns(prev => {
-              return [...prev, col['field']];
+            setDateColumns((prev) => {
+              return [...prev, col["field"]];
             });
           }
         }
-      })
+      });
     }
     // if (!appState.loading) {
     //   console.log('Loading Completed.. Setting Interval');
@@ -215,292 +215,296 @@ export function DisplayDataEntry({ onChange }) {
     //     clearInterval(inter);
     //   }
     // }
-  }, [appState.loading])
+  }, [appState.loading]);
 
   const updateDateEntry = () => {
     console.log(dateColumns);
     console.log(gridApiRef.current.state);
-  }
+  };
 
-  const handleCellEditCommit = React.useCallback(
-    async (params) => {
-      //  console.log(params.colDef.type)
-      try {
-        const config = { headers: { 'Content-Type': 'multipart/form-data' } };
-        let formData = new FormData()
-        if (params.colDef.type === 'date')
-          formData.append(params.field, JSON.stringify(params.value).substring(1, 11));
-        else
-          if (params.colDef.type === 'dateTime'){
-            console.log(params.value);
-            console.log(typeof(params.value));
-            formData.append(params.field, JSON.stringify(params.value).substring(1, 24));
-          }
-          else
-            if (typeof (params.value) == "object")
-              formData.append(params.field, JSON.stringify(params.value));
-            else
-              formData.append(params.field, params.value);
-        // for (let [key, value] of formData.entries()) {
-        //   console.log(key, ':', value);
-        // }
+  const handleCellEditCommit = React.useCallback(async (params) => {
+    //  console.log(params.colDef.type)
+    try {
+      const config = { headers: { "Content-Type": "multipart/form-data" } };
+      let formData = new FormData();
+      if (params.colDef.type === "date")
+        formData.append(
+          params.field,
+          JSON.stringify(params.value).substring(1, 11)
+        );
+      else if (params.colDef.type === "dateTime") {
+        console.log(params.value);
+        console.log(typeof params.value);
+        formData.append(
+          params.field,
+          JSON.stringify(params.value).substring(1, 24)
+        );
+      } else if (typeof params.value == "object")
+        formData.append(params.field, JSON.stringify(params.value));
+      else formData.append(params.field, params.value);
+      // for (let [key, value] of formData.entries()) {
+      //   console.log(key, ':', value);
+      // }
 
-        axiosInstance.put(`models/getCellUpdate/${list_group['list']}/abc/${params.id}/`, formData, config)
-          .then(res => {
-            enqueueSnackbar(`value Updated Successfully`, {
-              variant: 'success',
-            })
-          }).catch(e => {
-            enqueueSnackbar(`Please try again!!`, {
-              variant: 'error',
-            })
+      axiosInstance
+        .put(
+          `models/getCellUpdate/${list_group["list"]}/abc/${params.id}/`,
+          formData,
+          config
+        )
+        .then((res) => {
+          enqueueSnackbar(`value Updated Successfully`, {
+            variant: "success",
+          });
+        })
+        .catch((e) => {
+          enqueueSnackbar(`Please try again!!`, {
+            variant: "error",
+          });
+        });
+      // Make the HTTP request to save in the backend
+      // const response = await mutateRow({
+      //   id: params.id,
+      //   [params.field]: params.value,
+      // });
 
-          })
-        // Make the HTTP request to save in the backend
-        // const response = await mutateRow({
-        //   id: params.id,
-        //   [params.field]: params.value,
-        // });
-
-        // setSnackbar({ children: 'User successfully saved', severity: 'success' });
-        // setRows((prev) =>
-        //   prev.map((row) => (row.id === params.id ? { ...row, ...response } : row)),
-        // );
-      } catch (error) {
-        // setSnackbar({ children: 'Error while saving user', severity: 'error' });
-        // // Restore the row in case of error
-        // setRows((prev) => [...prev]);
-        navigate("/")
-      }
-    },
-    [],
-  );
+      // setSnackbar({ children: 'User successfully saved', severity: 'success' });
+      // setRows((prev) =>
+      //   prev.map((row) => (row.id === params.id ? { ...row, ...response } : row)),
+      // );
+    } catch (error) {
+      // setSnackbar({ children: 'Error while saving user', severity: 'error' });
+      // // Restore the row in case of error
+      // setRows((prev) => [...prev]);
+      navigate("/");
+    }
+  }, []);
 
   const handleInterviewerClick = (event, email, candidate_name) => {
-    console.log('Clicked On Interviewer');
+    console.log("Clicked On Interviewer");
     console.log(email);
     console.log(candidate_name);
-    const newReceiver = connectedUsers.filter(user => {
+    const newReceiver = connectedUsers.filter((user) => {
       return user[0] === email;
-    })
+    });
     if (!newReceiver.length) {
-      axiosInstance.get(`chat/getusername/${email}`)
-        .then(response => {
-          response = response.data;
-          if (!response.is_online)
-            response.is_online = false;
-          dispatch(setIsChatOpen(true));
-          dispatch(setReceiver([email, response.user_name, response.is_online]));
-        })
+      axiosInstance.get(`chat/getusername/${email}`).then((response) => {
+        response = response.data;
+        if (!response.is_online) response.is_online = false;
+        dispatch(setIsChatOpen(true));
+        dispatch(setReceiver([email, response.user_name, response.is_online]));
+      });
     } else {
       console.log(newReceiver[0]);
       dispatch(setIsChatOpen(true));
       dispatch(setReceiver(newReceiver[0]));
     }
-  }
+  };
 
   const PostLoadingComponent = ({ isLoading, ...props }) => {
     if (!appState.loading) {
-      console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
-      return (<>
-        <Header listname={props.listHistory} group={list_group['group']} select='list' isList={true} permisssion={props.permisssion} />
-        <Container maxWidth="false" sx={{ height: "100%", margin: 0 }}>
-          <Form >
-            <Box
-              sx={{
-                height: 660,
-                backgroundColor: 'white',
-                width: 1,
-                '& .super-app-theme--cell': {
-                  backgroundColor: 'rgba(224, 183, 60, 0.55)',
-                  color: '#1a3e72',
-                  fontWeight: '600',
-                },
-                '& .super-app.darkblue': {
-                  backgroundColor: '#0070c0',
-                  color: '#f5f5f5',
-                  fontWeight: '600',
-                },
-                '& .super-app.lightblue': {
-                  backgroundColor: '#00b0f0',
-                  color: '#f5f5f5',
-                  fontWeight: '600',
-                },
-                '& .super-app.orange': {
-                  backgroundColor: '#ffc000',
-                  color: '#212121',
-                  fontWeight: '600',
-                },
-                '& .super-app.yellow': {
-                  backgroundColor: '#feff00',
-                  color: '#212121',
-                  fontWeight: '600',
-                },
-                '& .super-app.lightgreen': {
-                  backgroundColor: '#92d050',
-                  color: '#f5f5f5',
-                  fontWeight: '600',
-                },
-                '& .super-app.green': {
-                  backgroundColor: '#00b050',
-                  color: '#f5f5f5',
-                  fontWeight: '600',
-                },
-                '& .super-app.lightred': {
-                  backgroundColor: '#ef9a9a',
-                  color: '#212121',
-                  fontWeight: '600',
-                },
-                '& .super-app.red': {
-                  backgroundColor: '#e53935',
-                  color: '#f5f5f5',
-                  fontWeight: '600',
-                }
-              }}
-            >
-              <DataGrid rows={appState.data}
-                columns={appState.cols}
-                onCellEditCommit={handleCellEditCommit}
-                pageSize={100}
-                rowHeight={100}
-                apiRef={gridApiRef}
-                // editMode="row"
-                components={{
-                  Toolbar: () => {
-                    return (
-                      <div>
-                        <GridToolbarContainer>
-                          <Button color="success" component={NavLink} to={`/new-entry`}>
-                            <AddIcon />Add New Entry
-                                        </Button>
-                          <GridToolbarExport style={{ color: "#800000" }} />
-                        </GridToolbarContainer>
-                      </div>
-                    )
+      console.log(
+        "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      );
+      return (
+        <>
+          <Header
+            listname={props.listHistory}
+            group={list_group["group"]}
+            select="list"
+            isList={true}
+            permisssion={props.permisssion}
+          />
+          <Container maxWidth="false" sx={{ height: "100%", margin: 0 }}>
+            <Form>
+              <Box
+                sx={{
+                  height: 660,
+                  backgroundColor: "white",
+                  width: 1,
+                  "& .super-app-theme--cell": {
+                    backgroundColor: "rgba(224, 183, 60, 0.55)",
+                    color: "#1a3e72",
+                    fontWeight: "600",
                   },
-
-                  Footer: () => {
-                    return (
-                      <Box sx={{ padding: '10px', display: 'flex' }}>
-                        <Button
-                          //  onClick={handleClickOpen}
-                          fontSize="small"
-                          sx={{
-                            mr: 2,
-                          }}
-                        >
-                          <ReportShare data={props.data} cols={props.original[0]} />
-                        </Button>
-                        <BootstrapDialog
-                          onClose={handleClose}
-                          aria-labelledby="customized-dialog-title"
-                          open={open}
-                        >
-                          <BootstrapDialogTitle id="customized-dialog-title" onClose={handleClose}>
-                            Modal title
-                          </BootstrapDialogTitle>
-                          <DialogContent dividers>
-                            {
-                              Object.entries(props.cols).map((data) => {
-
-                                return (
-                                  <div>
-                                    {data[0]}
-                                  </div>
-                                )
-                              })
-                            }
-                          </DialogContent>
-                          <DialogActions>
-                            <Button autoFocus onClick={handleClose}>
-                              Save changes
+                  "& .super-app.darkblue": {
+                    backgroundColor: "#0070c0",
+                    color: "#f5f5f5",
+                    fontWeight: "600",
+                  },
+                  "& .super-app.lightblue": {
+                    backgroundColor: "#00b0f0",
+                    color: "#f5f5f5",
+                    fontWeight: "600",
+                  },
+                  "& .super-app.orange": {
+                    backgroundColor: "#ffc000",
+                    color: "#212121",
+                    fontWeight: "600",
+                  },
+                  "& .super-app.yellow": {
+                    backgroundColor: "#feff00",
+                    color: "#212121",
+                    fontWeight: "600",
+                  },
+                  "& .super-app.lightgreen": {
+                    backgroundColor: "#92d050",
+                    color: "#f5f5f5",
+                    fontWeight: "600",
+                  },
+                  "& .super-app.green": {
+                    backgroundColor: "#00b050",
+                    color: "#f5f5f5",
+                    fontWeight: "600",
+                  },
+                  "& .super-app.lightred": {
+                    backgroundColor: "#ef9a9a",
+                    color: "#212121",
+                    fontWeight: "600",
+                  },
+                  "& .super-app.red": {
+                    backgroundColor: "#e53935",
+                    color: "#f5f5f5",
+                    fontWeight: "600",
+                  },
+                }}
+              >
+                <DataGrid
+                  rows={appState.data}
+                  columns={appState.cols}
+                  onCellEditCommit={handleCellEditCommit}
+                  pageSize={100}
+                  rowHeight={100}
+                  apiRef={gridApiRef}
+                  // editMode="row"
+                  components={{
+                    Toolbar: () => {
+                      return (
+                        <div>
+                          <GridToolbarContainer>
+                            <Button
+                              color="success"
+                              component={NavLink}
+                              to={`/list/new-entry`}
+                            >
+                              <AddIcon />
+                              Add New Entry
                             </Button>
-                          </DialogActions>
-                        </BootstrapDialog>
-                      </Box>)
-                  },
-                }}
-                componentsProps={{
-                  footer: 'connected',
-                }}
-                initialState={{ pinnedColumns: { left: ['name'] }, value: appState.data }}
-                onStateChange={state => console.log(state)}
-              />
-            </Box>
-          </Form>
-        </Container></>)
-        ;
+                            <GridToolbarExport style={{ color: "#800000" }} />
+                          </GridToolbarContainer>
+                        </div>
+                      );
+                    },
+
+                    Footer: () => {
+                      return (
+                        <Box sx={{ padding: "10px", display: "flex" }}>
+                          <Button
+                            //  onClick={handleClickOpen}
+                            fontSize="small"
+                            sx={{
+                              mr: 2,
+                            }}
+                          >
+                            <ReportShare
+                              data={props.data}
+                              cols={props.original[0]}
+                            />
+                          </Button>
+                          <BootstrapDialog
+                            onClose={handleClose}
+                            aria-labelledby="customized-dialog-title"
+                            open={open}
+                          >
+                            <BootstrapDialogTitle
+                              id="customized-dialog-title"
+                              onClose={handleClose}
+                            >
+                              Modal title
+                            </BootstrapDialogTitle>
+                            <DialogContent dividers>
+                              {Object.entries(props.cols).map((data) => {
+                                return <div>{data[0]}</div>;
+                              })}
+                            </DialogContent>
+                            <DialogActions>
+                              <Button autoFocus onClick={handleClose}>
+                                Save changes
+                              </Button>
+                            </DialogActions>
+                          </BootstrapDialog>
+                        </Box>
+                      );
+                    },
+                  }}
+                  componentsProps={{
+                    footer: "connected",
+                  }}
+                  initialState={{
+                    pinnedColumns: { left: ["name"] },
+                    value: appState.data,
+                  }}
+                  onStateChange={(state) => console.log(state)}
+                />
+              </Box>
+            </Form>
+          </Container>
+        </>
+      );
     }
     return (
       <Container maxWidth="lg">
-
         <Card elevation={0}>
           <CardHeader
             titleTypographyProps={{
               style: {
                 fontSize: 30,
-
-              }
+              },
             }}
-            title={
-              "List Loading"
-            }
+            title={"List Loading"}
           />
-          <Paper style={{ height: 470, overflow: 'auto', border: 1 }}>
-            <CardContent>
-            </CardContent>
+          <Paper style={{ height: 470, overflow: "auto", border: 1 }}>
+            <CardContent></CardContent>
             <Skeleton variant="text" width={400} />
             <Skeleton variant="circular" width={70} height={70} />
             <Skeleton variant="rectangular" width={400} height={200} />
-
-
           </Paper>
         </Card>
-
       </Container>
-
-
     );
   };
 
-
-
   useEffect(() => {
     let users = null;
-    axiosInstance.get('user/alluser/')
-      .then((res) => {
-        users = res.data
-      })
+    axiosInstance.get("user/alluser/").then((res) => {
+      users = res.data;
+    });
 
-    if (list_group['list'] == null && list_group['group'] == null)
-      navigate('/')
+    if (list_group["list"] == null && list_group["group"] == null)
+      navigate("/");
     let editt = false;
     axiosInstance
-      .get(
-        `models/get/${list_group['list']}/${list_group['group']}`)
+      .get(`models/get/${list_group["list"]}/${list_group["group"]}`)
       .then((res) => {
         // console.log(res.data['edit']);
-        editt = res.data['edit'];
-
+        editt = res.data["edit"];
 
         if (editt) {
-
           columns.push({
-            field: 'Edit',
-            type: 'actions',
+            field: "Edit",
+            type: "actions",
             width: 100,
             getActions: (params) => [
               <GridActionsCellItem
                 icon={<EditIcon />}
                 label="Edit"
                 LinkComponent={NavLink}
-                to={`/update/${list_group['list']}/${params.id}`}
+                to={`/list/update/${list_group["list"]}/${params.id}`}
               />,
               <GridActionsCellItem
                 icon={<DeleteIcon />}
                 label="Delete"
                 onClick={() => {
-                  
                   //  axiosInstance.delete(`models/single/${list_group['list']}/${list_group['group']}/${params.id}/`)
                   // .then((res)=>{
                   //   console.log("res.data")
@@ -510,7 +514,7 @@ export function DisplayDataEntry({ onChange }) {
                   // let newarr = appState.data.map(key=>{
                   //      if( key.id !==params.id)
                   //          return key
-                  // })  
+                  // })
                   // appState.data = newarr
                   // // const remaining =  Object.entries(appState.data).filter((item,index1) =>  item[1].id !==params.id );
                   // // console.log(typeof(remaining))
@@ -521,16 +525,15 @@ export function DisplayDataEntry({ onChange }) {
                   // navigate('/display-list-data')
                   // console.log(appState.data)
                   // }).catch((e)=>{console.log(e)})
-                  navigate(`/delete-record/${params.id}`)
+                  navigate(`/list/delete-record/${params.id}`);
                 }}
-
-              />
+              />,
             ],
-          })
+          });
         }
 
         axiosInstance
-          .get(baseURL.concat(list_group['list'] + '/'))
+          .get(baseURL.concat(list_group["list"] + "/"))
           .then((res) => {
             const allFields = res.data;
             // let edit = true;
@@ -540,78 +543,84 @@ export function DisplayDataEntry({ onChange }) {
               // console.log(col.input_type)
               if (columsTypes.includes(col.input_type))
                 columns.push({
-                  headerClassName: 'super-app-theme--header', field: (col.name).replaceAll(/ /g, "_").toLowerCase(), headerName: col.name, editable: editt, minWidth: 250, type: col.input_type
-
-
-                })
-              else if (col.input_type === 'number') {
+                  headerClassName: "super-app-theme--header",
+                  field: col.name.replaceAll(/ /g, "_").toLowerCase(),
+                  headerName: col.name,
+                  editable: editt,
+                  minWidth: 250,
+                  type: col.input_type,
+                });
+              else if (col.input_type === "number") {
                 columns.push({
-                  headerClassName: 'super-app-theme--header', field: (col.name).replaceAll(/ /g, "_").toLowerCase(), headerName: col.name, editable: editt, minWidth: 250, type: 'number',
+                  headerClassName: "super-app-theme--header",
+                  field: col.name.replaceAll(/ /g, "_").toLowerCase(),
+                  headerName: col.name,
+                  editable: editt,
+                  minWidth: 250,
+                  type: "number",
                   renderCell: (params) => {
-                    if (col.separater)
-                      return params.value
-                    return <NumberFormat value={params.value} displayType={'text'} format="##### #####" />
-
-                  }
-
-
-                })
-              }
-              else if (col.input_type === 'location') {
+                    if (col.separater) return params.value;
+                    return (
+                      <NumberFormat
+                        value={params.value}
+                        displayType={"text"}
+                        format="##### #####"
+                      />
+                    );
+                  },
+                });
+              } else if (col.input_type === "location") {
                 columns.push({
-                  field: (col.name).replaceAll(/ /g, "_").toLowerCase(), headerName: col.name, editable: editt, minWidth: 250,
+                  field: col.name.replaceAll(/ /g, "_").toLowerCase(),
+                  headerName: col.name,
+                  editable: editt,
+                  minWidth: 250,
                   valueGetter: (params) => {
-                    return params.value
+                    return params.value;
                   },
                   renderEditCell: (params) => {
-                    console.log(col)
-                    return (<TextField
-                      margin="dense"
-                      id="days"
-                      label={col.name}
-                      type="text"
-                      select
-                      fullWidth
-                      variant="outlined"
-                      sx={{
-                        width: 'auto',
-                        whiteSpace: 'nowrap',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
+                    console.log(col);
+                    return (
+                      <TextField
+                        margin="dense"
+                        id="days"
+                        label={col.name}
+                        type="text"
+                        select
+                        fullWidth
+                        variant="outlined"
+                        sx={{
+                          width: "auto",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
 
-                        WebkitLineClamp: 1,
-                        WebkitBoxOrient: 'vertical'
-                      }}
-                      SelectProps={{
-                        multiple: true,
-                        value: [params.value],
-                        renderValue: (selected) => {
-                          try {
-                            return (
-
-                              Object.values(selected[0][0])
-                            )
-                          }
-                          catch (err) {
-                            return "Double Click"
-                          }
-
-
-                        }
-
-                      }}
-                    >
-                      <div style={{ display: "flex", flexDirection: "column" }}>
-                        {
-
-                          (col.columns.extra_columns).map((rec, index) => {
+                          WebkitLineClamp: 1,
+                          WebkitBoxOrient: "vertical",
+                        }}
+                        SelectProps={{
+                          multiple: true,
+                          value: [params.value],
+                          renderValue: (selected) => {
                             try {
-                              console.log(params.value[index][rec])
+                              return Object.values(selected[0][0]);
+                            } catch (err) {
+                              return "Double Click";
                             }
-                            catch (err) {
-                              if (params.value == null)
-                                params.value = {}
-                              params.value = Object.assign(params.value, { [index]: { [rec]: '' } })
+                          },
+                        }}
+                      >
+                        <div
+                          style={{ display: "flex", flexDirection: "column" }}
+                        >
+                          {col.columns.extra_columns.map((rec, index) => {
+                            try {
+                              console.log(params.value[index][rec]);
+                            } catch (err) {
+                              if (params.value == null) params.value = {};
+                              params.value = Object.assign(params.value, {
+                                [index]: { [rec]: "" },
+                              });
                             }
                             return (
                               <div
@@ -619,19 +628,19 @@ export function DisplayDataEntry({ onChange }) {
                                   display: "flex",
                                   flexDirection: "row",
                                   gap: 20,
-                                  padding: 10
+                                  padding: 10,
                                 }}
                               >
                                 <TextField
                                   variant="outlined"
                                   sx={{
-                                    width: 'auto',
-                                    whiteSpace: 'nowrap',
-                                    overflow: 'hidden',
-                                    textOverflow: 'ellipsis',
+                                    width: "auto",
+                                    whiteSpace: "nowrap",
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
 
                                     WebkitLineClamp: 1,
-                                    WebkitBoxOrient: 'vertical'
+                                    WebkitBoxOrient: "vertical",
                                   }}
                                   defaultValue={params.value[index][rec]}
                                   label={rec}
@@ -645,7 +654,7 @@ export function DisplayDataEntry({ onChange }) {
                                     //     : day
                                     // );
                                     const { id, api, field, value } = params;
-                                    const newValue = value
+                                    const newValue = value;
                                     newValue[index][rec] = e.target.value;
                                     // console.log(value )
                                     // console.log(newValue)
@@ -663,42 +672,42 @@ export function DisplayDataEntry({ onChange }) {
                                     // console.log(api);
                                     // /* try changing the set value from newValue to value (current)
                                     //                                   this is expected to work */
-                                    api.setEditCellValue({ id, field, value: newValue });
-
+                                    api.setEditCellValue({
+                                      id,
+                                      field,
+                                      value: newValue,
+                                    });
                                   }}
                                 />
                               </div>
-                            )
-                          })
-                        }
-                      </div>
-                    </TextField>
-
-                    )
+                            );
+                          })}
+                        </div>
+                      </TextField>
+                    );
                   },
                   renderCell: (params) => {
                     if (params.value) {
-                      const loc = Object.entries(params.value).reduce((prevValue, locObj) => {
-                        const key = Object.keys(locObj[1]);
-                        return { ...prevValue, [key]: locObj[1][key] };
-                      }, {})
-                      const text = `${loc['streetaddress']}, \n${loc['city']}, ${loc['state']}, \n${loc['countryandregion']} - ${loc['postalcode']}.`;
-                      return (
-                        <p style={{ whiteSpace: 'pre-wrap' }}>
-                          {text}
-                        </p>
-                      )
+                      const loc = Object.entries(params.value).reduce(
+                        (prevValue, locObj) => {
+                          const key = Object.keys(locObj[1]);
+                          return { ...prevValue, [key]: locObj[1][key] };
+                        },
+                        {}
+                      );
+                      const text = `${loc["streetaddress"]}, \n${loc["city"]}, ${loc["state"]}, \n${loc["countryandregion"]} - ${loc["postalcode"]}.`;
+                      return <p style={{ whiteSpace: "pre-wrap" }}>{text}</p>;
                     } else {
-                      return "Double Click."
+                      return "Double Click.";
                     }
-                  }
-                })
-              }
-
-
-              else if (col.input_type === 'currency') {
+                  },
+                });
+              } else if (col.input_type === "currency") {
                 columns.push({
-                  field: (col.name).replaceAll(/ /g, "_").toLowerCase(), headerName: col.name, editable: editt, minWidth: 250,
+                  field: col.name.replaceAll(/ /g, "_").toLowerCase(),
+                  headerName: col.name,
+                  editable: editt,
+                  minWidth: 250,
                   renderCell: (params) => {
                     return (
                       <NumberFormat
@@ -709,315 +718,403 @@ export function DisplayDataEntry({ onChange }) {
                         decimalScale={col.columns.decimal_palces}
                         displayType="text"
                       />
-                    )
-                  }
-                })
-              }
-              else if (col.input_type === 'dateTime') {
+                    );
+                  },
+                });
+              } else if (col.input_type === "dateTime") {
                 columns.push({
-                  field: (col.name).replaceAll(/ /g, "_").toLowerCase(), width: 240, headerName: col.name, editable: editt, minWidth: 250, type: 'dateTime',
+                  field: col.name.replaceAll(/ /g, "_").toLowerCase(),
+                  width: 240,
+                  headerName: col.name,
+                  editable: editt,
+                  minWidth: 250,
+                  type: "dateTime",
                   // valueGetter: ({ value }) =><IconButton >{String(value && new Date(value))}</IconButton > ,
                   cellClassName: ({ value }) => {
                     // console.log(new Date(col.columns.default_date))
-                    const timee = timeDiffCalc(new Date(value), new Date()).split(" ");
+                    const timee = timeDiffCalc(
+                      new Date(value),
+                      new Date()
+                    ).split(" ");
                     // console.log((timee))
-                    return clsx('super-app', {
-                      lightblue: (timee.length === 4) ? ((timee[0] <= 23 && timee[2] <= 59) && (timee[0] >= 6 && timee[2] >= 0) ? true : false) : false,
-                      darkblue: (timee.length === 6) ? ((timee[0] == 1 && timee[2] <= 23 && timee[4] <= 59) && (timee[0] == 1 && timee[2] >= 0 && timee[4] >= 0) ? true : false) : false,
-                      lightgreen: timee.length === 4 ? ((timee[0] < 6 && timee[0] >= 2) ? true : false) : false,
-                      green: timee.length === 4 ? ((timee[0] == 1 && (timee[0] > 0)) ? true : false) : false,
-                      orange: timee.length === 4 ? ((timee[0] == 0 && (timee[2] >= 30)) ? true : false) : false,
-                      yellow: timee.length === 4 ? ((timee[0] == 0 && timee[2] < 30) ? true : false) : false,
-                      lightred: (timee.includes('past') && timee.length === 5) ? ((timee[0] >= 0 && timee[0] <= 24) ? true : false) : false,
-                      red: (timee.includes('past') && timee.length === 7) ? true : false,
-                    })
+                    return clsx("super-app", {
+                      lightblue:
+                        timee.length === 4
+                          ? timee[0] <= 23 &&
+                            timee[2] <= 59 &&
+                            timee[0] >= 6 &&
+                            timee[2] >= 0
+                            ? true
+                            : false
+                          : false,
+                      darkblue:
+                        timee.length === 6
+                          ? timee[0] == 1 &&
+                            timee[2] <= 23 &&
+                            timee[4] <= 59 &&
+                            timee[0] == 1 &&
+                            timee[2] >= 0 &&
+                            timee[4] >= 0
+                            ? true
+                            : false
+                          : false,
+                      lightgreen:
+                        timee.length === 4
+                          ? timee[0] < 6 && timee[0] >= 2
+                            ? true
+                            : false
+                          : false,
+                      green:
+                        timee.length === 4
+                          ? timee[0] == 1 && timee[0] > 0
+                            ? true
+                            : false
+                          : false,
+                      orange:
+                        timee.length === 4
+                          ? timee[0] == 0 && timee[2] >= 30
+                            ? true
+                            : false
+                          : false,
+                      yellow:
+                        timee.length === 4
+                          ? timee[0] == 0 && timee[2] < 30
+                            ? true
+                            : false
+                          : false,
+                      lightred:
+                        timee.includes("past") && timee.length === 5
+                          ? timee[0] >= 0 && timee[0] <= 24
+                            ? true
+                            : false
+                          : false,
+                      red:
+                        timee.includes("past") && timee.length === 7
+                          ? true
+                          : false,
+                    });
                   },
                   renderCell: ({ value }) => {
                     // console.log(new Date(col.columns.default_date))
                     // console.log(value)
                     // console.log(Date(value))
                     return (
-
-                      <Tooltip title={timeDiffCalc(new Date(value), new Date())}>
+                      <Tooltip
+                        title={timeDiffCalc(new Date(value), new Date())}
+                      >
                         <Typography variant="subtitle2" color="white">
-                          {String(dateFormat((value && new Date(value)), col.columns.date_Format))}
+                          {String(
+                            dateFormat(
+                              value && new Date(value),
+                              col.columns.date_Format
+                            )
+                          )}
                         </Typography>
                       </Tooltip>
-                    )
+                    );
                   },
-                  valueFormatter: ({ value }) => dateFormat((value && new Date(value)), col.columns.date_Format)
-                })
-              }
-              else if (col.input_type === 'date') {
+                  valueFormatter: ({ value }) =>
+                    dateFormat(
+                      value && new Date(value),
+                      col.columns.date_Format
+                    ),
+                });
+              } else if (col.input_type === "date") {
                 columns.push({
-                  field: (col.name).replaceAll(/ /g, "_").toLowerCase(), width: 240, headerName: col.name, editable: editt, minWidth: 250, type: 'date',
-                  valueFormatter: ({ value }) => dateFormat((value && new Date(value)), col.columns.date_Format)
-                })
-              }
-              else if (col.input_type === 'document') {
-
+                  field: col.name.replaceAll(/ /g, "_").toLowerCase(),
+                  width: 240,
+                  headerName: col.name,
+                  editable: editt,
+                  minWidth: 250,
+                  type: "date",
+                  valueFormatter: ({ value }) =>
+                    dateFormat(
+                      value && new Date(value),
+                      col.columns.date_Format
+                    ),
+                });
+              } else if (col.input_type === "document") {
                 columns.push({
-                  field: (col.name).replaceAll(/ /g, "_").toLowerCase(), headerName: col.name, editable: editt, minWidth: 250,
+                  field: col.name.replaceAll(/ /g, "_").toLowerCase(),
+                  headerName: col.name,
+                  editable: editt,
+                  minWidth: 250,
 
                   renderCell: (params) => {
-
                     return (
                       <IconButton
                         onClick={() => {
-
                           try {
-                            fileDownload(`download/${list_group['list']}/${params.row['id']}/${params.field}/`, (params.value).split("/"))
-                          }
-                          catch (err) {
-
-                          }
-
+                            fileDownload(
+                              `download/${list_group["list"]}/${params.row["id"]}/${params.field}/`,
+                              params.value.split("/")
+                            );
+                          } catch (err) {}
                         }}
-                        size="large">
-                        {
-                          (getName(params.value)) ?
-                            <Tooltip title={getName(params.value)}>
-                              <AttachFileIcon color='success' />
-                            </Tooltip>
-                            :
-                            <Tooltip title="No File">
-                              <AttachFileIcon />
-                            </Tooltip>
-                        }
+                        size="large"
+                      >
+                        {getName(params.value) ? (
+                          <Tooltip title={getName(params.value)}>
+                            <AttachFileIcon color="success" />
+                          </Tooltip>
+                        ) : (
+                          <Tooltip title="No File">
+                            <AttachFileIcon />
+                          </Tooltip>
+                        )}
                       </IconButton>
                     );
-                  }
-
-                })
-              }
-
-              else if (col.input_type === 'hyperlink') {
+                  },
+                });
+              } else if (col.input_type === "hyperlink") {
                 columns.push({
-                  field: (col.name).replaceAll(/ /g, "_").toLowerCase(), headerName: col.name, editable: editt, minWidth: 250,
+                  field: col.name.replaceAll(/ /g, "_").toLowerCase(),
+                  headerName: col.name,
+                  editable: editt,
+                  minWidth: 250,
                   valueGetter: (params) => {
                     // console.log(params.value)
-                    return params.value
+                    return params.value;
                   },
                   valueFormatter: (params) => {
-                    let url = null
-                    let urlname = null
+                    let url = null;
+                    let urlname = null;
                     try {
-                      return params.value[0]['url']
-
+                      return params.value[0]["url"];
                     } catch (err) {
-                      return ""
+                      return "";
                     }
-
                   },
                   renderEditCell: (params) => {
-                    let url = null
-                    let urlname = null
+                    let url = null;
+                    let urlname = null;
                     try {
-                      url = params.value[0]['url']
-
+                      url = params.value[0]["url"];
                     } catch (err) {
-                      url = " "
+                      url = " ";
                     }
                     try {
-                      urlname = params.value[0]['urlname']
-
+                      urlname = params.value[0]["urlname"];
                     } catch (err) {
-                      urlname = "Link Not Added"
+                      urlname = "Link Not Added";
                     }
-                    return (<TextField
-                      margin="dense"
-                      id="days"
-                      label="Days"
-                      type="text"
-                      select
-                      fullWidth
-                      sx={{
-                        width: 'auto',
-                        whiteSpace: 'nowrap',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
+                    return (
+                      <TextField
+                        margin="dense"
+                        id="days"
+                        label="Days"
+                        type="text"
+                        select
+                        fullWidth
+                        sx={{
+                          width: "auto",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
 
-                        WebkitLineClamp: 1,
-                        WebkitBoxOrient: 'vertical'
-                      }}
-                      variant="outlined"
-                      SelectProps={{
-                        multiple: true,
-                        value: [params.value],
-                        renderValue: (selected) => {
-                          try {
-                            return selected[0][0]['url']
-                          }
-                          catch (err) {
-                            return "Linked Not Added"
-                          }
-                        }
-
-                      }}
-                    >
-                      <div style={{ display: "flex", flexDirection: "column" }}>
-                        {
-                          <div
-                            style={{
-                              display: "flex",
-                              flexDirection: "row",
-                              gap: 20,
-                              padding: 10
-                            }}
-                          >
-                            <TextField
-                              variant="outlined"
-                              sx={{
-                                width: 'auto',
-                                whiteSpace: 'nowrap',
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis',
-
-                                WebkitLineClamp: 1,
-                                WebkitBoxOrient: 'vertical'
+                          WebkitLineClamp: 1,
+                          WebkitBoxOrient: "vertical",
+                        }}
+                        variant="outlined"
+                        SelectProps={{
+                          multiple: true,
+                          value: [params.value],
+                          renderValue: (selected) => {
+                            try {
+                              return selected[0][0]["url"];
+                            } catch (err) {
+                              return "Linked Not Added";
+                            }
+                          },
+                        }}
+                      >
+                        <div
+                          style={{ display: "flex", flexDirection: "column" }}
+                        >
+                          {
+                            <div
+                              style={{
+                                display: "flex",
+                                flexDirection: "row",
+                                gap: 20,
+                                padding: 10,
                               }}
-                              defaultValue={url}
-                              label={'URL'}
-                              onChange={(e) => {
-                                const { id, api, field, value } = params;
-                                let newValue = value
-                                try {
-                                  newValue[0]['url'] = e.target.value;
-                                }
-                                catch (err) {
-                                  newValue = {}
-                                  newValue = Object.assign(newValue, { [0]: { ['url']: e.target.value } })
-                                }
-
-                                api.setEditCellValue({ id, field, value: newValue });
-                              }}
-                            />
-                            {col.columns.text_over_link && (
+                            >
                               <TextField
                                 variant="outlined"
                                 sx={{
-                                  width: 'auto',
-                                  wordBreak: 'break-all',
-                                  whiteSpace: 'nowrap',
-                                  overflow: 'hidden',
-                                  textOverflow: 'ellipsis',
+                                  width: "auto",
+                                  whiteSpace: "nowrap",
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
 
                                   WebkitLineClamp: 1,
-                                  WebkitBoxOrient: 'vertical'
+                                  WebkitBoxOrient: "vertical",
                                 }}
-                                defaultValue={urlname}
-                                label={"URLname"}
+                                defaultValue={url}
+                                label={"URL"}
                                 onChange={(e) => {
-
                                   const { id, api, field, value } = params;
-                                  let newValue = value
-
+                                  let newValue = value;
                                   try {
-                                    newValue[0]['urlname'] = e.target.value;
+                                    newValue[0]["url"] = e.target.value;
+                                  } catch (err) {
+                                    newValue = {};
+                                    newValue = Object.assign(newValue, {
+                                      [0]: { ["url"]: e.target.value },
+                                    });
                                   }
-                                  catch (err) {
-                                    newValue = {}
-                                    newValue = Object.assign(newValue, { [0]: { ['urlname']: e.target.value } })
-                                  }
-                                  api.setEditCellValue({ id, field, value: newValue });
+
+                                  api.setEditCellValue({
+                                    id,
+                                    field,
+                                    value: newValue,
+                                  });
                                 }}
                               />
-                            )}
-                          </div>
+                              {col.columns.text_over_link && (
+                                <TextField
+                                  variant="outlined"
+                                  sx={{
+                                    width: "auto",
+                                    wordBreak: "break-all",
+                                    whiteSpace: "nowrap",
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
 
+                                    WebkitLineClamp: 1,
+                                    WebkitBoxOrient: "vertical",
+                                  }}
+                                  defaultValue={urlname}
+                                  label={"URLname"}
+                                  onChange={(e) => {
+                                    const { id, api, field, value } = params;
+                                    let newValue = value;
 
-                        }
-                      </div>
-                    </TextField>
-
-                    )
+                                    try {
+                                      newValue[0]["urlname"] = e.target.value;
+                                    } catch (err) {
+                                      newValue = {};
+                                      newValue = Object.assign(newValue, {
+                                        [0]: { ["urlname"]: e.target.value },
+                                      });
+                                    }
+                                    api.setEditCellValue({
+                                      id,
+                                      field,
+                                      value: newValue,
+                                    });
+                                  }}
+                                />
+                              )}
+                            </div>
+                          }
+                        </div>
+                      </TextField>
+                    );
                   },
                   renderCell: (params) => {
-                    let url = null
-                    let urlname = null
+                    let url = null;
+                    let urlname = null;
                     try {
-                      url = params.value[0]['url']
-
+                      url = params.value[0]["url"];
                     } catch (err) {
-                      url = ""
+                      url = "";
                     }
                     try {
-                      urlname = params.value[0]['urlname']
+                      urlname = params.value[0]["urlname"];
                     } catch (err) {
-                      urlname = "Link Not Added"
+                      urlname = "Link Not Added";
                     }
                     return (
-                      <Link href={url} color="#02025f" sx={{
-                        width: 'auto',
-                        whiteSpace: 'nowrap',
-                        textOverflow: 'ellipsis',
-                        overflow: 'hidden',
-                        WebkitLineClamp: 1,
-                        WebkitBoxOrient: 'vertical',
-                        wordBreak: 'break-all',
-                      }}>
+                      <Link
+                        href={url}
+                        color="#02025f"
+                        sx={{
+                          width: "auto",
+                          whiteSpace: "nowrap",
+                          textOverflow: "ellipsis",
+                          overflow: "hidden",
+                          WebkitLineClamp: 1,
+                          WebkitBoxOrient: "vertical",
+                          wordBreak: "break-all",
+                        }}
+                      >
                         {col.columns.text_over_link ? urlname : url}
-                      </Link>)
-                  }
-
-
-                })
-              }
-
-              else if (col.input_type === 'people_group') {
-                console.log(users)
+                      </Link>
+                    );
+                  },
+                });
+              } else if (col.input_type === "people_group") {
+                console.log(users);
 
                 columns.push({
-                  field: (col.name).replaceAll(/ /g, "_").toLowerCase(), headerName: col.name, editable: true, minWidth: 350,
+                  field: col.name.replaceAll(/ /g, "_").toLowerCase(),
+                  headerName: col.name,
+                  editable: true,
+                  minWidth: 350,
 
                   valueFormatter: (params) => {
                     try {
-                      return Object.values(params.value).map(rec => rec.email).toString()
-                    }
-                    catch (err) {
-                      return ""
+                      return Object.values(params.value)
+                        .map((rec) => rec.email)
+                        .toString();
+                    } catch (err) {
+                      return "";
                     }
                   },
                   renderCell: (params) => {
                     // console.log(params)
-                    if (params.field == 'interviewer') {
-                      const interviewerList = params.row.interviewer;
-                      if (interviewerList) {
-                        return (
-                          <Container sx={{ display: 'flex', flexDirection: 'column', overflowY: 'auto', height: '70%' }}>
-                            {interviewerList.map(person => {
-                              return (
-                                <Tooltip title="Click to send Message and double click to edit">
-                                  <Typography
-                                    align='center'
-                                    classes={{
-                                      style: {
-                                        maxWidth: '60%',
-                                      }
-                                    }}
-                                    onClick={event => handleInterviewerClick(event, person.email, params.row.candidate_name)} sx={{ padding: '2px', fontSize: '0.9rem' }} > {person.email.toString()} </Typography>
-                                </Tooltip>
-                              );
-                            })}
-                          </Container>
-                        )
-                      }
+                    const field_name = params.field;
+                    const interviewerList = params.row[field_name];
+                    if (interviewerList) {
+                      return (
+                        <Container
+                          sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            overflowY: "auto",
+                            height: "70%",
+                          }}
+                        >
+                          {interviewerList.map((person) => {
+                            return (
+                              <Tooltip
+                                title="Click to send Message and double click to edit"
+                                key={person.email}
+                              >
+                                <Typography
+                                  align="center"
+                                  classes={{
+                                    style: {
+                                      maxWidth: "60%",
+                                    },
+                                  }}
+                                  onClick={(event) =>
+                                    handleInterviewerClick(
+                                      event,
+                                      person.email,
+                                      params.row.candidate_name
+                                    )
+                                  }
+                                  sx={{ padding: "2px", fontSize: "0.9rem" }}
+                                >
+                                  {" "}
+                                  {person.email.toString()}{" "}
+                                </Typography>
+                              </Tooltip>
+                            );
+                          })}
+                        </Container>
+                      );
                     }
-                    return (
-                      <>
-                        <Tooltip title={(params.formattedValue).toString()}>
-                          <Typography> {(params.formattedValue).toString()}</Typography>
-                        </Tooltip>
-                      </>
-                    )
                   },
                   renderEditCell: (params) => {
-                    let optionsss = []
+                    let optionsss = [];
                     try {
-                      optionsss = Object.values(params.value).map(rec => rec)
-                    }
-                    catch (err) {
-                      optionsss = []
+                      optionsss = Object.values(params.value).map((rec) => rec);
+                    } catch (err) {
+                      optionsss = [];
                     }
 
                     return (
@@ -1025,29 +1122,28 @@ export function DisplayDataEntry({ onChange }) {
                         defaultValue={optionsss}
                         multiple
                         disablePortal
-                        isOptionEqualToValue={(option, value) => option.email === value.email}
+                        isOptionEqualToValue={(option, value) =>
+                          option.email === value.email
+                        }
                         getOptionLabel={(option) => option.email}
                         id="combo-box-demo"
                         options={users}
                         fullWidth
                         sx={{
                           width: 300,
-                          overflowY: 'auto'
+                          overflowY: "auto",
                         }}
                         onChange={(_event, selected) => {
                           const { id, api, field, value } = params;
-                          const newValue = value
-                          console.log(value)
+                          const newValue = value;
+                          console.log(value);
                           // newValue[index][rec] = selected;
 
                           api.setEditCellValue({ id, field, value: selected });
-
-
                         }}
-                        renderInput={(params) => <TextField {...params} label={col.name}
-
-
-                        />}
+                        renderInput={(params) => (
+                          <TextField {...params} label={col.name} />
+                        )}
                       />
                       // <Autocomplete
                       //   fullWidth
@@ -1064,7 +1160,7 @@ export function DisplayDataEntry({ onChange }) {
                       //   getOptionLabel={(option) => option.email}
                       //   options={[{email:"Himanshu@gmail.com",user_name:"Himanshu",groups:[]},{email:"Yash@gmail.com",user_name:"yash",groups:[]}]}
 
-                      //   // defaultValue={optionsss}                    
+                      //   // defaultValue={optionsss}
                       //   renderInput={(params) => (
                       //     <TextField
                       //       {...params}
@@ -1081,111 +1177,150 @@ export function DisplayDataEntry({ onChange }) {
                       //     />
                       //   )}
                       // />
-                    )
-                  }
-
-                })
-              }
-
-              else if (col.input_type === 'choice') {
-                const images = importAll(require.context('../../assets/Icons for List', false, /\.(png|jpe?g|svg)$/))
-                const options = []
-                const all = []
-                Object.entries(col.columns['choices']).map((ch) => {
-                  options.push(ch[1]['name'])
-                  all.push(ch[1])
-                })
+                    );
+                  },
+                });
+              } else if (col.input_type === "choice") {
+                const images = importAll(
+                  require.context(
+                    "../../assets/Icons for List",
+                    false,
+                    /\.(png|jpe?g|svg)$/
+                  )
+                );
+                const options = [];
+                const all = [];
+                Object.entries(col.columns["choices"]).map((ch) => {
+                  options.push(ch[1]["name"]);
+                  all.push(ch[1]);
+                });
                 columns.push({
-                  field: (col.name).replaceAll(/ /g, "_").toLowerCase(), headerName: col.name, editable: editt, minWidth: 250, type: 'singleSelect', valueOptions: options,
+                  field: col.name.replaceAll(/ /g, "_").toLowerCase(),
+                  headerName: col.name,
+                  editable: editt,
+                  minWidth: 250,
+                  type: "singleSelect",
+                  valueOptions: options,
                   renderEditCell: (params) => {
                     const { id, api, field, value } = params;
                     return (
+                      <Select
+                        onChange={(e) => {
+                          api.setEditCellValue({
+                            id,
+                            field,
+                            value: e.target.value,
+                          });
+                        }}
+                        value={value}
+                        variant="outlined"
+                        sx={{
+                          width: "auto",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
 
-                      <Select onChange={(e) => { api.setEditCellValue({ id, field, value: e.target.value }) }} value={value} variant="outlined" sx={{
-                        width: 'auto',
-                        whiteSpace: 'nowrap',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-
-                        WebkitLineClamp: 1,
-                        WebkitBoxOrient: 'vertical'
-                      }} fullWidth  >
-                        {Object.entries(col.columns['choices']).map((ch) => {
+                          WebkitLineClamp: 1,
+                          WebkitBoxOrient: "vertical",
+                        }}
+                        fullWidth
+                      >
+                        {Object.entries(col.columns["choices"]).map((ch) => {
                           return (
-                            <MenuItem value={ch[1]['name']} key={ch[1]['name']} >
+                            <MenuItem value={ch[1]["name"]} key={ch[1]["name"]}>
                               <Chip
-                                avatar={<Icon component={MuiIcons[ch[1]['path']]} sx={{ color: 'white' }} ></Icon>}
-                                label={ch[1]['name']}
-                                sx={{ bgcolor: ch[1]['code'], color: 'white' }}
+                                avatar={
+                                  <Icon
+                                    component={MuiIcons[ch[1]["path"]]}
+                                    sx={{ color: "white" }}
+                                  ></Icon>
+                                }
+                                label={ch[1]["name"]}
+                                sx={{ bgcolor: ch[1]["code"], color: "white" }}
                                 // style={{ backgroundColor: ch[1]['code'] , textEmphasisColor:'white' }}
                                 size="small"
                                 variant={col.columns.button_style}
                               />
                             </MenuItem>
-                          )
-
+                          );
                         })}
-
                       </Select>
-                    )
-                  }
-                  ,
+                    );
+                  },
                   renderCell: (params) => {
-                    const val = all.filter(rec => rec['name'] == params.value)[0]
+                    const val = all.filter(
+                      (rec) => rec["name"] == params.value
+                    )[0];
                     if (val === undefined) {
-                      const val = all.filter(rec => rec['name'] == col.columns.default_val)[0]
+                      const val = all.filter(
+                        (rec) => rec["name"] == col.columns.default_val
+                      )[0];
 
                       return (
-                        <Chip sx={{ bgcolor: val['code'], color: 'white' }}
-                          avatar={<Icon component={MuiIcons[val['path']]} sx={{ color: 'white' }} ></Icon>}
-                          label={val['name']}
+                        <Chip
+                          sx={{ bgcolor: val["code"], color: "white" }}
+                          avatar={
+                            <Icon
+                              component={MuiIcons[val["path"]]}
+                              sx={{ color: "white" }}
+                            ></Icon>
+                          }
+                          label={val["name"]}
                           // style={{ backgroundColor: val['code']  }}
                           size="small"
                           variant={col.columns.button_style}
                         />
-                      )
+                      );
                     }
                     return (
                       <Chip
-                        avatar={<Icon component={MuiIcons[val['path']]} sx={{ color: 'white' }} ></Icon>}
+                        avatar={
+                          <Icon
+                            component={MuiIcons[val["path"]]}
+                            sx={{ color: "white" }}
+                          ></Icon>
+                        }
                         label={params.value}
                         // style={{ backgroundColor: val['code']  }}
-                        sx={{ bgcolor: val['code'], color: 'white' }}
+                        sx={{ bgcolor: val["code"], color: "white" }}
                         size="small"
                         variant={col.columns.button_style}
                       />
-                    )
-                  }
-                })
+                    );
+                  },
+                });
+              } else {
+                console.log("Refresh");
               }
-              else {
-                console.log("Refresh")
-              }
-            })
+            });
             if (editt) {
               columns.push({
                 width: 150,
-                type: 'string',
+                type: "string",
                 disableColumnMenu: true,
                 sortable: false,
                 renderHeader: () => (
-                  <strong >
-                    <Link component={NavLink} href="#" color="#1b0618" to={`/list-dashboard`}>
-                      {'Add Columns'}
+                  <strong>
+                    <Link
+                      component={NavLink}
+                      href="#"
+                      color="#1b0618"
+                      to={`/list/list-dashboard`}
+                    >
+                      {"Add Columns"}
                       <span role="img" aria-label="enjoy">
                         ➕
-                            </span>
+                      </span>
                     </Link>
                   </strong>
                 ),
-              })
+              });
             }
-            // setValues([...columns])        
-            let nextIndex = 1
+            // setValues([...columns])
+            let nextIndex = 1;
             //Data
             axiosInstance
-              .get(
-                `models/single/${list_group['list']}/${list_group['group']}`)
+              .get(`models/single/${list_group["list"]}/${list_group["group"]}`)
               .then((res) => {
                 const allData = res.data;
 
@@ -1195,65 +1330,83 @@ export function DisplayDataEntry({ onChange }) {
                   //   console.log(Object.keys(data))
                   collectionOfdata.push(data);
                   nextIndex++;
-                })
+                });
                 // console.log(nextIndex);
 
                 // collectionOfdata.push({id:nextIndex++})
                 // setDetails([...collectionOfdata])
 
                 axiosInstance
-                  .get(`allLists/${list_group['list']}/`)
+                  .get(`allLists/${list_group["list"]}/`)
                   .then((ress) => {
                     // setListHistory([ress.data])
                     localStorage.removeItem("listname");
                     localStorage.setItem("listname", JSON.stringify(ress.data));
-                    // setListHistory(listHistory,()=>props.onChangeName(listHistory))                    
+                    // setListHistory(listHistory,()=>props.onChangeName(listHistory))
                     // props.onChangeName()
                     // console.log(listHistory['modelname'])
                     // console.log(props)
-                    let agg = []
-                    let data = []
-                    let rows = []
+                    let agg = [];
+                    let data = [];
+                    let rows = [];
                     allFields.map((col) => {
                       // console.log(col)
-                      if ((col.input_type == 'number' && data.indexOf(col.name) == -1) || (col.input_type == 'currency' && data.indexOf(col.name) == -1)) {
+                      if (
+                        (col.input_type == "number" &&
+                          data.indexOf(col.name) == -1) ||
+                        (col.input_type == "currency" &&
+                          data.indexOf(col.name) == -1)
+                      ) {
                         collectionOfdata.map((d) => {
-                          agg.push(d[(col.name).replaceAll(/ /g, "_").toLowerCase()])
-                          data.push(col.name)
-                        }
-                        )
+                          agg.push(
+                            d[col.name.replaceAll(/ /g, "_").toLowerCase()]
+                          );
+                          data.push(col.name);
+                        });
                         // console.log(agg.length)
-                        const arrSum = agg.reduce((a, b) => a + b, 0)
-                        rows.push({ id: col.id, column: col.name, count: agg.length, sum: arrSum, mean: arrSum / agg.length, minimum: Math.min(...agg), maximum: Math.max(...agg) })
+                        const arrSum = agg.reduce((a, b) => a + b, 0);
+                        rows.push({
+                          id: col.id,
+                          column: col.name,
+                          count: agg.length,
+                          sum: arrSum,
+                          mean: arrSum / agg.length,
+                          minimum: Math.min(...agg),
+                          maximum: Math.max(...agg),
+                        });
                         // rows=[]
-                        data = []
-                        agg = []
+                        data = [];
+                        agg = [];
                       }
-                    })
-                    console.log(rows)
-                    setAppState({ loading: false, listHistory: [ress.data], cols: [...columns], data: [...collectionOfdata], original: [rows], permisssion: editt });
+                    });
+                    console.log(rows);
+                    setAppState({
+                      loading: false,
+                      listHistory: [ress.data],
+                      cols: [...columns],
+                      data: [...collectionOfdata],
+                      original: [rows],
+                      permisssion: editt,
+                    });
                   })
-                  .catch(e => {
-                    console.log(e)
-                  })
+                  .catch((e) => {
+                    console.log(e);
+                  });
               })
-              .catch(e => {
-                console.log(e)
-              })
+              .catch((e) => {
+                console.log(e);
+              });
           })
-          .catch(e => {
-            console.log(e)
-
+          .catch((e) => {
+            console.log(e);
           });
 
         //Lists
-
       })
-      .catch(e => {
-        console.log(e)
-        alert("You Are Not Auth")
-      })
-
+      .catch((e) => {
+        console.log(e);
+        alert("You Are Not Auth");
+      });
   }, [setAppState]);
 
   // useEffect(() => {
@@ -1269,7 +1422,7 @@ export function DisplayDataEntry({ onChange }) {
   //     const res = await axiosInstance.get('user/alluser/');
   //     console.log(res)
   //     const { data } = await res;
-  //     console.log(data)   
+  //     console.log(data)
   //     if (active) {
   //       console.log(data)
   //       setOptions(res.data);
@@ -1291,8 +1444,16 @@ export function DisplayDataEntry({ onChange }) {
 
   return (
     <div className="App">
-
-      <PostLoadingComponent isLoading={appState.loading} cols={appState.cols} data={appState.data} id={appState.id} listHistory={appState.listHistory} original={appState.original} allUsers={appState.option} permisssion={appState.permisssion} />
+      <PostLoadingComponent
+        isLoading={appState.loading}
+        cols={appState.cols}
+        data={appState.data}
+        id={appState.id}
+        listHistory={appState.listHistory}
+        original={appState.original}
+        allUsers={appState.option}
+        permisssion={appState.permisssion}
+      />
     </div>
   );
 }

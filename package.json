@@ -1,8 +1,8 @@
 {
   "name": "my-app",
   "version": "0.1.0",
-  "homepage": "https://sanskarbiyani.github.io/recruitmentPortalFrontend",
-  "private": true,
+  "homepage": "https://sankarbiyani.github.io/reactFrontEnd",
+  "private": false,
   "dependencies": {
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
