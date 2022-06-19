@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Card,
   CardHeader,
@@ -8,24 +8,23 @@ import {
   Typography,
   Divider,
   CardContent,
+} from "@mui/material";
 
-} from '@mui/material'
-
-import CircleOutlinedIcon from '@mui/icons-material/RadioButtonChecked'
-import Circle from '@mui/icons-material/RadioButtonUnchecked';
+import CircleOutlinedIcon from "@mui/icons-material/RadioButtonChecked";
+import Circle from "@mui/icons-material/RadioButtonUnchecked";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Form } from '../ControlFields/Form'
-import { useForm } from 'react-hook-form';
-import { SwitchCustom } from '../ControlFields/Switch'
-import { Input } from '../ControlFields/TextField'
-import { PrimaryButton } from '../ControlFields/SubmitButton';
-import { CheckboxCustom } from '../ControlFields/choice';
-import { useSelector } from 'react-redux';
-import { useSnackbar } from 'notistack';
-import axiosInstance from '../../axois';
+import { Form } from "../ControlFields/Form";
+import { useForm } from "react-hook-form";
+import { SwitchCustom } from "../ControlFields/Switch";
+import { Input } from "../ControlFields/TextField";
+import { PrimaryButton } from "../ControlFields/SubmitButton";
+import { CheckboxCustom } from "../ControlFields/choice";
+import { useSelector } from "react-redux";
+import { useSnackbar } from "notistack";
+import axiosInstance from "../../axois";
 import { useNavigate } from "react-router-dom";
-const baseURL = "addFields/"
+const baseURL = "addFields/";
 
 const options = [
   {
@@ -48,7 +47,6 @@ const options = [
     label: "Postal Code",
     value: "postalcode",
   },
-
 ];
 
 const schema = yup.object().shape({
@@ -56,16 +54,13 @@ const schema = yup.object().shape({
     .string()
     .matches(/^([^0-9]*)$/, "First name should not contain numbers")
     .required("First name is a required field"),
-
-
 });
-
 
 const AccountProfileDetails = ({ props, onSubmiting }) => {
   const listname = useSelector((state) => state.customization.group_list);
   const { enqueueSnackbar } = useSnackbar();
   const [data, setValues] = useState({
-    modelname: listname['list'],
+    modelname: listname["list"],
     name: "",
     data_type: "json",
     max_length: 30,
@@ -78,48 +73,53 @@ const AccountProfileDetails = ({ props, onSubmiting }) => {
       default_val: {},
       require_val: true,
       extra_columns: [],
-      validations: []
-    }
-
+      validations: [],
+    },
   });
 
-  const { register, handleSubmit, setValue, control, formState: { errors } } = useForm({
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    control,
+    formState: { errors },
+  } = useForm({
     defaultValues: { ...data },
     mode: "onBlur",
     resolver: yupResolver(schema),
-  })
+  });
 
   const navigate = useNavigate();
   const onSubmit = (data) => {
     data.columns.extra_columns.map((rec) => {
-      data.columns.extra_columns[rec] = ''
-    })
+      data.columns.extra_columns[rec] = "";
+    });
     if (data.columns.require_val) {
       data.columns.validations.push({
         type: "required",
-        params: ["this field is required"]
-      })
+        params: ["this field is required"],
+      });
     }
     console.log(JSON.stringify(data, null, 2));
     setValues(data);
     axiosInstance
-      .post(baseURL,
-        data)
+      .post(baseURL, data)
       .then((response) => {
+        onSubmiting(JSON.stringify(data, null, 2));
 
-        onSubmiting(JSON.stringify(data, null, 2))
-
-        enqueueSnackbar(response.data, {
-          variant: 'success',
-        },
-        navigate(`/list/display-list-data/`)
+        enqueueSnackbar(
+          response.data,
+          {
+            variant: "success",
+          },
+          navigate(`/list/display-list-data/`)
         );
-
-      }).catch((e) => {
+      })
+      .catch((e) => {
         alert(e);
       });
-    (data.columns.validations).length = 0
-  }
+    data.columns.validations.length = 0;
+  };
 
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
@@ -129,14 +129,23 @@ const AccountProfileDetails = ({ props, onSubmiting }) => {
           title="How Do You Want Your Location?"
         />
         <Divider />
-        <Paper style={{ height: 360, overflow: 'auto', border: 1 }}>
+        <Paper style={{ height: 360, overflow: "auto", border: 1 }}>
           <CardContent>
-            <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 1 }} >
+            <Grid
+              container
+              rowSpacing={2}
+              columnSpacing={{ xs: 1, sm: 2, md: 1 }}
+            >
               <Grid item xs={6}>
-                <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 4 }} spacing={2}>
+                <Grid
+                  container
+                  rowSpacing={2}
+                  columnSpacing={{ xs: 1, sm: 2, md: 4 }}
+                  spacing={2}
+                >
                   <Grid item xs={11}>
                     <Input
-                      {...register('name')}
+                      {...register("name")}
                       id="name"
                       type="text"
                       label="Name"
@@ -147,7 +156,7 @@ const AccountProfileDetails = ({ props, onSubmiting }) => {
                   </Grid>
                   <Grid item xs={11}>
                     <Input
-                      {...register('description')}
+                      {...register("description")}
                       id="description"
                       type="text"
                       label="Description"
@@ -159,8 +168,8 @@ const AccountProfileDetails = ({ props, onSubmiting }) => {
                     />
                   </Grid>
                   <Grid item xs={11}>
-                    <Grid container direction='row' spacing={0} >
-                      <Grid item xs={7}  >
+                    <Grid container direction="row" spacing={0}>
+                      <Grid item xs={7}>
                         <Typography variant="h6" gutterBottom component="div">
                           Required
                         </Typography>
@@ -168,7 +177,7 @@ const AccountProfileDetails = ({ props, onSubmiting }) => {
                       <Grid item>
                         <Grid container direction="row">
                           <SwitchCustom
-                            {...register('columns.require_val')}
+                            {...register("columns.require_val")}
                             id="columns.require_val"
                             label="require_val"
                             control={control}
@@ -179,8 +188,8 @@ const AccountProfileDetails = ({ props, onSubmiting }) => {
                     </Grid>
                   </Grid>
                   <Grid item xs={11}>
-                    <Grid container direction='row' spacing={0} >
-                      <Grid item xs={7}  >
+                    <Grid container direction="row" spacing={0}>
+                      <Grid item xs={7}>
                         <Typography variant="h6" gutterBottom component="div">
                           Google Location
                         </Typography>
@@ -188,7 +197,7 @@ const AccountProfileDetails = ({ props, onSubmiting }) => {
                       <Grid item>
                         <Grid container direction="row">
                           <SwitchCustom
-                            {...register('columns.google_loc')}
+                            {...register("columns.google_loc")}
                             id="columns.google_loc"
                             label="google_loc"
                             control={control}
@@ -200,15 +209,24 @@ const AccountProfileDetails = ({ props, onSubmiting }) => {
                   </Grid>
                 </Grid>
               </Grid>
-              <Grid item xs={6}  >
-                <Grid container rowSpacing={2} columnSpacing={{ xs: 0, sm: 0, md: 0 }} spacing={2}   >
+              <Grid item xs={6}>
+                <Grid
+                  container
+                  rowSpacing={2}
+                  columnSpacing={{ xs: 0, sm: 0, md: 0 }}
+                  spacing={2}
+                >
                   <Grid item xs={11} justifyContent="flex-end">
                     <Typography variant="h6">Add these columns also</Typography>
                   </Grid>
-                  <Grid item xs={11} style={{ alignItems: 'flex-end' }}>
-                    <Grid container alignContent="flex-end" justifyContent="flex-end"  >
+                  <Grid item xs={11} style={{ alignItems: "flex-end" }}>
+                    <Grid
+                      container
+                      alignContent="flex-end"
+                      justifyContent="flex-end"
+                    >
                       <CheckboxCustom
-                        {...register('columns.extra_columns')}
+                        {...register("columns.extra_columns")}
                         id="columns.extra_columns"
                         label={""}
                         control={control}
@@ -227,36 +245,33 @@ const AccountProfileDetails = ({ props, onSubmiting }) => {
         </Paper>
         <Box
           sx={{
-            display: 'flex',
-            justifyContent: 'flex-end',
-            p: 2
+            display: "flex",
+            justifyContent: "flex-end",
+            p: 2,
           }}
         >
-          <Grid container direction="row-reverse" spacing={2} >
-            <Grid item >
+          <Grid container direction="row-reverse" spacing={2}>
+            <Grid item>
               <PrimaryButton
                 color="secondary"
                 variant="contained"
-                onClick={() => { navigate(`/list/display-list-data/`) }}
+                onClick={() => {
+                  navigate(`/list/display-list-data/`);
+                }}
               >
                 Cancel
               </PrimaryButton>
             </Grid>
             <Grid item xs={3}>
-              <PrimaryButton
-                color="primary"
-                variant="contained"
-                type='submit'
-              >
+              <PrimaryButton color="primary" variant="contained" type="submit">
                 Save details
               </PrimaryButton>
             </Grid>
           </Grid>
         </Box>
-
       </Card>
     </Form>
   );
 };
 
-export default AccountProfileDetails; 
+export default AccountProfileDetails;

@@ -33,7 +33,7 @@ export const FileInput = ({ control, name }) => {
       control={control}
       name={name}
       defaultValue={[]}
-      render={({ field:{ onChange, onBlur, value} }) => (
+      render={({ field: { onChange, onBlur, value } }) => (
         <>
           <Dropzone onDrop={onChange}>
             {({ getRootProps, getInputProps }) => (
@@ -45,10 +45,8 @@ export const FileInput = ({ control, name }) => {
                 <CloudUpload className={styles.icon} />
                 <input {...getInputProps()} name={name} onBlur={onBlur} />
                 <p>Drag 'n' drop files here, or click to select files</p>
-                
               </Paper>
             )}
-            
           </Dropzone>
           {console.log(value)}
           <List>

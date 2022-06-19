@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Card,
   CardHeader,
@@ -8,19 +8,19 @@ import {
   Typography,
   Divider,
   CardContent,
-} from '@mui/material'
+} from "@mui/material";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Form } from '../ControlFields/Form'
-import { useForm } from 'react-hook-form';
-import { SwitchCustom } from '../ControlFields/Switch'
-import { Input } from '../ControlFields/TextField'
-import { PrimaryButton } from '../ControlFields/SubmitButton';
-import { useSelector } from 'react-redux';
-import { useSnackbar } from 'notistack';
-import axiosInstance from '../../axois';
+import { Form } from "../ControlFields/Form";
+import { useForm } from "react-hook-form";
+import { SwitchCustom } from "../ControlFields/Switch";
+import { Input } from "../ControlFields/TextField";
+import { PrimaryButton } from "../ControlFields/SubmitButton";
+import { useSelector } from "react-redux";
+import { useSnackbar } from "notistack";
+import axiosInstance from "../../axois";
 import { useNavigate } from "react-router-dom";
-const baseURL = "addFields/"
+const baseURL = "addFields/";
 const schema = yup.object().shape({
   name: yup
     .string()
@@ -36,16 +36,15 @@ const schema = yup.object().shape({
     decimal_palces: yup
       .number()
       .min(0, "Decimal place Should be more than 0")
-      .max(10, "Decimal place Should be less than 10")
-  })
-
+      .max(10, "Decimal place Should be less than 10"),
+  }),
 });
 
 const AccountProfileDetails = ({ props, onSubmiting }) => {
   const listname = useSelector((state) => state.customization.group_list);
   const { enqueueSnackbar } = useSnackbar();
   const [data, setValues] = useState({
-    modelname: listname['list'],
+    modelname: listname["list"],
     name: "",
     data_type: "float",
     max_length: 225,
@@ -61,19 +60,21 @@ const AccountProfileDetails = ({ props, onSubmiting }) => {
       min_val_allowed: 1,
       max_val_allowed: 10,
       separater: false,
-      validations: []
-    }
-
+      validations: [],
+    },
   });
   useEffect(() => {
     console.log(data);
   }, [data]);
 
-
-
-
-
-  const { register, handleSubmit, setValue, control, watch, formState: { errors } } = useForm({
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    control,
+    watch,
+    formState: { errors },
+  } = useForm({
     defaultValues: { ...data },
     mode: "onBlur",
     resolver: yupResolver(schema),
@@ -92,50 +93,58 @@ const AccountProfileDetails = ({ props, onSubmiting }) => {
 
   const navigate = useNavigate();
   const onSubmit = (data) => {
-
     if (data.columns.require_val) {
       data.columns.validations.push({
         type: "required",
-        params: ["this field is required"]
-      })
+        params: ["this field is required"],
+      });
     }
-
 
     data.columns.validations.push({
       type: "min",
-      params: [data.columns.min_val_allowed, data.name + " cannot be less than " + data.columns.min_val_allowed + " characters"]
-    })
+      params: [
+        data.columns.min_val_allowed,
+        data.name +
+          " cannot be less than " +
+          data.columns.min_val_allowed +
+          " characters",
+      ],
+    });
 
     data.columns.validations.push({
       type: "max",
-      params: [data.columns.max_val_allowed, data.name + " cannot be less than " + data.columns.max_val_allowed + " characters"]
-    })
-
+      params: [
+        data.columns.max_val_allowed,
+        data.name +
+          " cannot be less than " +
+          data.columns.max_val_allowed +
+          " characters",
+      ],
+    });
 
     console.log(JSON.stringify(data, null, 2));
 
-    console.log(data.columns)
+    console.log(data.columns);
 
     axiosInstance
-      .post(baseURL,
-        data)
+      .post(baseURL, data)
       .then((response) => {
+        onSubmiting(JSON.stringify(data, null, 2));
 
-        onSubmiting(JSON.stringify(data, null, 2))
-
-        enqueueSnackbar(response.data, {
-          variant: 'success',
-        },
+        enqueueSnackbar(
+          response.data,
+          {
+            variant: "success",
+          },
           navigate(`/list/display-list-data/`)
         );
-
-      }).catch((e) => {
+      })
+      .catch((e) => {
         alert(e);
       });
     setValues(data);
-    data.columns.validations = []
-  }
-
+    data.columns.validations = [];
+  };
 
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
@@ -143,41 +152,45 @@ const AccountProfileDetails = ({ props, onSubmiting }) => {
         <CardHeader
           subheader="The information can be edited"
           title="How Do You Want Your Number?"
-
         />
         <Divider />
-        <Paper style={{ height: 360, overflow: 'auto', border: 1 }}>
+        <Paper style={{ height: 360, overflow: "auto", border: 1 }}>
           <CardContent>
-
-            <Grid container rowspacing={2} columnspacing={{ xs: 1, sm: 2, md: 1 }}>
+            <Grid
+              container
+              rowspacing={2}
+              columnspacing={{ xs: 1, sm: 2, md: 1 }}
+            >
               <Grid item xs={6}>
-                <Grid container rowspacing={4} columnspacing={{ xs: 1, sm: 2, md: 4 }} spacing={2}>
+                <Grid
+                  container
+                  rowspacing={4}
+                  columnspacing={{ xs: 1, sm: 2, md: 4 }}
+                  spacing={2}
+                >
                   <Grid item xs={11}>
                     <Input
-                      {...register('name')}
+                      {...register("name")}
                       id="name"
                       type="text"
                       label="Name"
                       control={control}
                       error={!!errors.name}
                       helperText={errors?.name?.message}
-
                     />
-
                   </Grid>
                   <Grid item xs={11}>
                     <Input
-                      {...register('columns.default_val')}
+                      {...register("columns.default_val")}
                       id="columns.default_val"
                       type="text"
                       label="Default Value"
                       control={control}
-
                     />
                   </Grid>
                   <Grid item xs={11}>
                     <Input
-                      {...register('columns.decimal_palces')}
+                      {...register("columns.decimal_palces")}
                       id="columns.decimal_palces"
                       type="number"
                       label="Decimal Places"
@@ -186,94 +199,73 @@ const AccountProfileDetails = ({ props, onSubmiting }) => {
                   </Grid>
 
                   <Grid item xs={11}>
-
-                    <Grid container direction='row' spacing={0} >
-
-                      <Grid item xs={5}  >
-
+                    <Grid container direction="row" spacing={0}>
+                      <Grid item xs={5}>
                         <Typography variant="h6" gutterBottom component="div">
-
                           Phone Number ?
-
-    </Typography>
-
+                        </Typography>
                       </Grid>
 
                       <Grid item>
-
                         <Grid container direction="row">
-
                           <SwitchCustom
-
-                            {...register('columns.phoneNumber')}
-
+                            {...register("columns.phoneNumber")}
                             id="columns.phoneNumber"
-
                             label="phoneNumber"
-
                             control={control}
-
                             name="columns.phoneNumber"
 
-                          // onChange = {() => {
+                            // onChange = {() => {
 
-                          //   console.log('Clicked.');
+                            //   console.log('Clicked.');
 
-                          //   if(watchPhoneNumber){
+                            //   if(watchPhoneNumber){
 
-                          //     setValue("columns.max_val_allowed", 10000000000);
+                            //     setValue("columns.max_val_allowed", 10000000000);
 
-                          //     setValue("columns.min_val_allowed", 999999999);
+                            //     setValue("columns.min_val_allowed", 999999999);
 
-                          //   }
+                            //   }
 
-                          // }}
-
+                            // }}
                           />
-
                         </Grid>
-
                       </Grid>
-
                     </Grid>
-
                   </Grid>
 
                   <Grid item xs={11}>
-                    <Grid container direction='row' spacing={0} >
-                      <Grid item xs={5}  >
+                    <Grid container direction="row" spacing={0}>
+                      <Grid item xs={5}>
                         <Typography variant="h6" gutterBottom component="div">
                           Required
                         </Typography>
                       </Grid>
                       <Grid item>
                         <Grid container direction="row">
-
                           <SwitchCustom
-                            {...register('columns.require_val')}
+                            {...register("columns.require_val")}
                             id="columns.require_val"
                             label="Required Vlue"
                             control={control}
                             name="columns.require_val"
-
                           />
-
                         </Grid>
                       </Grid>
                     </Grid>
                   </Grid>
 
                   <Grid item xs={11}>
-                    <Grid container direction='row' spacing={0} >
-                      <Grid item xs={5}  >
+                    <Grid container direction="row" spacing={0}>
+                      <Grid item xs={5}>
                         <Typography variant="h6" gutterBottom component="div">
                           unique Value
-                            </Typography>
+                        </Typography>
                       </Grid>
                       <Grid item>
                         <Grid container direction="row">
                           <SwitchCustom
-                            {...register('unique')}
+                            {...register("unique")}
                             id="unique"
                             label="Unique Value"
                             control={control}
@@ -284,16 +276,16 @@ const AccountProfileDetails = ({ props, onSubmiting }) => {
                     </Grid>
                   </Grid>
                   <Grid item xs={11}>
-                    <Grid container direction='row' spacing={0} >
-                      <Grid item xs={5}  >
+                    <Grid container direction="row" spacing={0}>
+                      <Grid item xs={5}>
                         <Typography variant="h6" gutterBottom component="div">
                           1000's Separator
-                            </Typography>
+                        </Typography>
                       </Grid>
                       <Grid item>
                         <Grid container direction="row">
                           <SwitchCustom
-                            {...register('columns.separater')}
+                            {...register("columns.separater")}
                             id="columns.separater"
                             label="Separater"
                             control={control}
@@ -306,81 +298,74 @@ const AccountProfileDetails = ({ props, onSubmiting }) => {
                 </Grid>
               </Grid>
               <Grid item xs={6}>
-                <Grid container rowspacing={2} columnspacing={{ xs: 0, sm: 0, md: 0 }} spacing={2}>
+                <Grid
+                  container
+                  rowspacing={2}
+                  columnspacing={{ xs: 0, sm: 0, md: 0 }}
+                  spacing={2}
+                >
                   <Grid item xs={11}>
                     <Input
-                      {...register('description')}
+                      {...register("description")}
                       id="description"
                       type="text"
                       label="Description"
                       multiline
                       rows={4}
                       control={control}
-
                     />
-
                   </Grid>
                   <Grid item xs={11}>
                     <Input
-                      {...register('columns.min_val_allowed')}
+                      {...register("columns.min_val_allowed")}
                       id="columns.min_val_allowed"
                       type="number"
                       label="Minimum allowed value"
                       control={control}
                       error={!!errors.min_val_allowed}
                       helperText={errors?.min_val_allowed?.message}
-
                     />
-
                   </Grid>
                   <Grid item xs={11}>
                     <Input
-                      {...register('columns.max_val_allowed')}
+                      {...register("columns.max_val_allowed")}
                       id="columns.max_val_allowed"
                       type="number"
                       label="maximum allowed value"
                       control={control}
-
-
                     />
                   </Grid>
                 </Grid>
               </Grid>
             </Grid>
-
           </CardContent>
-
         </Paper>
         <Box
           sx={{
-            display: 'flex',
-            justifyContent: 'flex-end',
-            p: 2
+            display: "flex",
+            justifyContent: "flex-end",
+            p: 2,
           }}
         >
-          <Grid container direction="row-reverse" spacing={2} >
-            <Grid item >
+          <Grid container direction="row-reverse" spacing={2}>
+            <Grid item>
               <PrimaryButton
                 color="secondary"
                 variant="contained"
-                onClick={() => { navigate(`/list/display-list-data/`) }}
+                onClick={() => {
+                  navigate(`/list/display-list-data/`);
+                }}
               >
                 Cancel
-                  </PrimaryButton>
+              </PrimaryButton>
             </Grid>
             <Grid item xs={3}>
-              <PrimaryButton
-                color="primary"
-                variant="contained"
-                type='submit'
-
-              >
+              <PrimaryButton color="primary" variant="contained" type="submit">
                 Save details
-                  </PrimaryButton>
+              </PrimaryButton>
             </Grid>
           </Grid>
         </Box>
-
       </Card>
     </Form>
   );

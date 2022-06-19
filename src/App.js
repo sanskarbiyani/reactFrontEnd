@@ -1,14 +1,11 @@
 import React, { useEffect } from "react";
 import { BrowserRouter as Router } from "react-router-dom";
-import { SnackbarProvider } from 'notistack';
-import { createTheme } from '@mui/material/styles';
+import { SnackbarProvider } from "notistack";
 // import { StylesProvider } from "@mui/styles"
-import { useSelector } from 'react-redux';
-import { ThemeProvider } from '@mui/material/styles';
-import { CssBaseline, StyledEngineProvider } from '@mui/material';
+import { useSelector } from "react-redux";
+import { ThemeProvider } from "@mui/material/styles";
 import themes from "./themes";
-import { StylesProvider } from "@mui/styles"
-import Routes from './routes';
+import Routes from "./routes";
 import axiosInstance from "./axois";
 
 // const theme = createTheme({
@@ -28,35 +25,33 @@ import axiosInstance from "./axois";
 //   },
 // });
 
-
-
 const App = () => {
   const customization = useSelector((state) => state.customization);
   useEffect(() => {
-    window.addEventListener('beforeunload', alertUser)
-    window.addEventListener('unload', handleTabClosing)
+    window.addEventListener("beforeunload", alertUser);
+    window.addEventListener("unload", handleTabClosing);
     return () => {
-      window.removeEventListener('beforeunload', alertUser)
-      window.removeEventListener('unload', handleTabClosing)
-    }
-  })
+      window.removeEventListener("beforeunload", alertUser);
+      window.removeEventListener("unload", handleTabClosing);
+    };
+  });
 
   const handleTabClosing = async () => {
-    const user = JSON.parse(localStorage.getItem('user'));
+    const user = JSON.parse(localStorage.getItem("user"));
     if (!user.remember) {
-      const response = axiosInstance.post('user/logout/blacklist/', {
-        refresh_token: localStorage.getItem('refresh_token'),
+      axiosInstance.post("user/logout/blacklist/", {
+        refresh_token: localStorage.getItem("refresh_token"),
       });
-      console.log('Removing.');
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('refresh_token');
+      console.log("Removing.");
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("refresh_token");
     }
-  }
+  };
 
   const alertUser = (event) => {
-    event.preventDefault()
-    event.returnValue = ''
-  }
+    event.preventDefault();
+    event.returnValue = "";
+  };
 
   console.log(process.env.PUBLIC_URL);
 
@@ -69,15 +64,7 @@ const App = () => {
         </Router>
       </ThemeProvider>
     </SnackbarProvider>
-
-
-
-    //  </StyledEngineProvider>
-
-
-
-
   );
-}
+};
 
 export default App;
