@@ -92,8 +92,8 @@ const AccountProfileDetails = ({ props, onSubmiting }) => {
   const updateFieldChanged = (name, index, newvalue) => {
     console.log("jello");
     let newArr = default_val.map((item, i) => {
-      if (index + 1 == i) {
-        return { ...item, ["label"]: newvalue, ["value"]: newvalue };
+      if (index + 1 === i) {
+        return { ...item, label: newvalue, value: newvalue };
       } else {
         return item;
       }

@@ -34,7 +34,7 @@ axiosInstance.interceptors.response.use(
       error.response.status === 401 &&
       originalRequest.url === baseURL + "token/refresh/"
     ) {
-      console.log("Expried");
+      console.log("Expired");
       window.location.href = "/authentication/login/";
       return Promise.reject(error);
     }
@@ -80,6 +80,16 @@ axiosInstance.interceptors.response.use(
         console.log("Refresh token not available.");
         window.location.href = "/authentication/login/";
       }
+    }
+
+    if (error.response.status === 400) {
+      let errorMessage = "";
+      Object.entries(error.response.data).forEach((item) => {
+        if (item[0] !== "message") {
+          errorMessage += `${item[0]} value already exist. Try a different one\n`;
+        }
+      });
+      alert(errorMessage);
     }
 
     // specific error handling done elsewhere

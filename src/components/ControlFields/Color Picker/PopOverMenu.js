@@ -35,10 +35,10 @@ const useStyles = makeStyles((theme) => ({
 function importAll(r) {
 
   let images = {};
-  r.keys().map(item => { images[item.replace('./', '')] = r(item); });
+  r.keys().forEach(item => { images[item.replace('./', '')] = r(item); });
   return images;
 }
-const cache = {}
+// const cache = {}
 
 const Images = React.memo((props) => {
   const classes = useStyles(props);
@@ -120,12 +120,10 @@ class PopOverMenu extends Component {
   }
 
   setIcon = (src) => {
-
     if (this.props.where !== "header")
       this.props.onSelect(this.props.index, src)
     else
       this.props.onChangeIcon(src)
-    {/* <img src={src}  width={this.props.where !== "header" ? 20:40} height={this.props.where !== "header" ? 20:40} style={{display:'flex', alignItems:'center', color:"red"}}/> */ }
     this.setState({
       icon: <Icon component={MuiIcons[src]} style={{ width: this.props.where !== "header" ? 20 : 40, height: this.props.where !== "header" ? 20 : 40 }}></Icon>
     })

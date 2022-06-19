@@ -18,10 +18,9 @@ export default function SignUp() {
   const webServer = useSelector((state) => state.chat.wsConn);
   useEffect(() => {
     if (!user.remember) {
-      const response = axiosInstance.post("user/logout/blacklist/", {
+      axiosInstance.post("user/logout/blacklist/", {
         refresh_token: localStorage.getItem("refresh_token"),
       });
-      console.log("Removing.");
       localStorage.removeItem("access_token");
       localStorage.removeItem("refresh_token");
     }

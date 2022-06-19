@@ -1,13 +1,10 @@
 import { useEffect, useState } from "react";
-import { useTheme } from "@mui/material/styles";
 import {
   Box,
   Button,
   InputAdornment,
   Grid,
   IconButton,
-  AppBar,
-  Toolbar,
   Card,
   Paper,
   CardHeader,
@@ -27,61 +24,61 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 import LoginIcon from "../../assets/AuthIcon/Login.svg";
 import axios from "axios";
-
+import { TextField } from "@mui/material";
+import { useSnackbar } from "notistack";
 import { yupResolver } from "@hookform/resolvers/yup";
 
-import Main_logo from "../../assets/Gallery Icons/APPLUS IDIADA.svg";
-import { useSnackbar } from "notistack";
-import makeStyles from "@mui/styles/makeStyles";
-import { TextField } from "@mui/material";
-const lightColor = "rgba(255, 255, 255, 0.7)";
-const useStyles = makeStyles((theme) => ({
-  secondaryBar: {
-    zIndex: 0,
-    background: theme.palette.primary.main,
-    color: "#212121",
-  },
-  header: {
-    padding: 8,
-    background: theme.palette.primary.main,
-    color: "#212121",
-  },
-  margin: {
-    margin: theme.spacing(1),
-  },
-  menuButton: {
-    marginLeft: -theme.spacing(4),
-  },
-  iconButtonAvatar: {
-    padding: 3,
-  },
-  link: {
-    textDecoration: "none",
-    color: theme.palette.common.black,
+// import { useTheme } from "@mui/material/styles";
+// import Main_logo from "../../assets/Gallery Icons/APPLUS IDIADA.svg";
+// import makeStyles from "@mui/styles/makeStyles";
+// const lightColor = "rgba(255, 255, 255, 0.7)";
+// const useStyles = makeStyles((theme) => ({
+//   secondaryBar: {
+//     zIndex: 0,
+//     background: theme.palette.primary.main,
+//     color: "#212121",
+//   },
+//   header: {
+//     padding: 8,
+//     background: theme.palette.primary.main,
+//     color: "#212121",
+//   },
+//   margin: {
+//     margin: theme.spacing(1),
+//   },
+//   menuButton: {
+//     marginLeft: -theme.spacing(4),
+//   },
+//   iconButtonAvatar: {
+//     padding: 3,
+//   },
+//   link: {
+//     textDecoration: "none",
+//     color: theme.palette.common.black,
 
-    minWidth: 40,
-    "&:hover": {
-      color: theme.palette.error.main,
-      boxShadow: 2,
-      //  text-shadow: .1em .1em .2em rgba(0, 0, 0, 0.6),
-    },
-  },
-  tab: {
-    marginLeft: 25,
-    textColor: theme.palette.error.main,
-    indicator: theme.palette.error.main,
+//     minWidth: 40,
+//     "&:hover": {
+//       color: theme.palette.error.main,
+//       boxShadow: 2,
+//       //  text-shadow: .1em .1em .2em rgba(0, 0, 0, 0.6),
+//     },
+//   },
+//   tab: {
+//     marginLeft: 25,
+//     textColor: theme.palette.error.main,
+//     indicator: theme.palette.error.main,
 
-    "& .MuiTabs-indicator": {
-      backgroundColor: theme.palette.error.main,
-    },
-  },
-  button: {
-    borderColor: lightColor,
-  },
-  hov: {
-    margin: theme.spacing(0),
-  },
-}));
+//     "& .MuiTabs-indicator": {
+//       backgroundColor: theme.palette.error.main,
+//     },
+//   },
+//   button: {
+//     borderColor: lightColor,
+//   },
+//   hov: {
+//     margin: theme.spacing(0),
+//   },
+// }));
 
 const schema = yup.object().shape({
   newpassword: yup.string().required("New Password is required Field"),
@@ -89,16 +86,13 @@ const schema = yup.object().shape({
 });
 
 const ForgetPassowrd = ({ ...others }) => {
-  const theme = useTheme();
   const location = useLocation();
   let navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
-  const classes = useStyles();
-  const [checked, setChecked] = useState(true);
 
-  const googleHandler = async () => {
-    console.error("Login");
-  };
+  // const googleHandler = async () => {
+  //   console.error("Login");
+  // };
 
   const [showPassword, setShowPassword] = useState(false);
   const [showPassword1, setShowPassword1] = useState(false);
@@ -127,7 +121,6 @@ const ForgetPassowrd = ({ ...others }) => {
   const {
     register,
     handleSubmit,
-    setValue,
     control,
     formState: { errors },
   } = useForm({
@@ -137,7 +130,7 @@ const ForgetPassowrd = ({ ...others }) => {
   });
 
   const onSubmit = (data) => {
-    console.log(JSON.stringify(data, null, 2));
+    // console.log(JSON.stringify(data, null, 2));
     setValues(data);
 
     axios
@@ -172,7 +165,7 @@ const ForgetPassowrd = ({ ...others }) => {
                   <Grid container direction="row">
                     <Grid item xs={4}>
                       <IconButton size="large">
-                        <img src={LoginIcon} />
+                        <img src={LoginIcon} alt="Login Icon" />
                       </IconButton>
                     </Grid>
                     <Grid item xs={8} style={{ marginTop: 5 }}>

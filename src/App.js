@@ -1,13 +1,10 @@
 import React, { useEffect } from "react";
 import { BrowserRouter as Router } from "react-router-dom";
 import { SnackbarProvider } from "notistack";
-import { createTheme } from "@mui/material/styles";
 // import { StylesProvider } from "@mui/styles"
 import { useSelector } from "react-redux";
 import { ThemeProvider } from "@mui/material/styles";
-import { CssBaseline, StyledEngineProvider } from "@mui/material";
 import themes from "./themes";
-import { StylesProvider } from "@mui/styles";
 import Routes from "./routes";
 import axiosInstance from "./axois";
 
@@ -42,7 +39,7 @@ const App = () => {
   const handleTabClosing = async () => {
     const user = JSON.parse(localStorage.getItem("user"));
     if (!user.remember) {
-      const response = axiosInstance.post("user/logout/blacklist/", {
+      axiosInstance.post("user/logout/blacklist/", {
         refresh_token: localStorage.getItem("refresh_token"),
       });
       console.log("Removing.");

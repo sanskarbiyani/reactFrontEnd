@@ -22,53 +22,52 @@ import { Input } from "../ControlFields/TextField";
 // assets
 
 import LoginIcon from "../../assets/AuthIcon/Login.svg";
-
+import { useSnackbar } from "notistack";
 import { yupResolver } from "@hookform/resolvers/yup";
 
-import makeStyles from "@mui/styles/makeStyles";
-import { useSnackbar } from "notistack";
-const lightColor = "rgba(255, 255, 255, 0.7)";
+// import makeStyles from "@mui/styles/makeStyles";
+// const lightColor = "rgba(255, 255, 255, 0.7)";
 
-const useStyles = makeStyles((theme) => ({
-  header: {
-    padding: 8,
-    background: "white",
-    color: "#212121",
-  },
-  margin: {
-    margin: theme.spacing(1),
-  },
-  menuButton: {
-    marginLeft: -theme.spacing(4),
-  },
-  iconButtonAvatar: {
-    padding: 3,
-  },
-  link: {
-    textDecoration: "none",
-    color: theme.palette.common.black,
+// const useStyles = makeStyles((theme) => ({
+//   header: {
+//     padding: 8,
+//     background: "white",
+//     color: "#212121",
+//   },
+//   margin: {
+//     margin: theme.spacing(1),
+//   },
+//   menuButton: {
+//     marginLeft: -theme.spacing(4),
+//   },
+//   iconButtonAvatar: {
+//     padding: 3,
+//   },
+//   link: {
+//     textDecoration: "none",
+//     color: theme.palette.common.black,
 
-    minWidth: 40,
-    "&:hover": {
-      color: theme.palette.error.main,
-      boxShadow: 2,
-    },
-  },
-  tab: {
-    marginLeft: 25,
-    textColor: theme.palette.error.main,
-    indicator: theme.palette.error.main,
-    "& .MuiTabs-indicator": {
-      backgroundColor: theme.palette.error.main,
-    },
-  },
-  button: {
-    borderColor: lightColor,
-  },
-  hov: {
-    margin: theme.spacing(0),
-  },
-}));
+//     minWidth: 40,
+//     "&:hover": {
+//       color: theme.palette.error.main,
+//       boxShadow: 2,
+//     },
+//   },
+//   tab: {
+//     marginLeft: 25,
+//     textColor: theme.palette.error.main,
+//     indicator: theme.palette.error.main,
+//     "& .MuiTabs-indicator": {
+//       backgroundColor: theme.palette.error.main,
+//     },
+//   },
+//   button: {
+//     borderColor: lightColor,
+//   },
+//   hov: {
+//     margin: theme.spacing(0),
+//   },
+// }));
 
 const schema = yup.object().shape({
   email: yup
@@ -83,12 +82,11 @@ const ForgetMailPassword = ({ ...others }) => {
   const [data, setValues] = useState({
     email: "",
   });
-  console.log(window.location.href);
+  // console.log(window.location.href);
 
   const {
     register,
     handleSubmit,
-    setValue,
     control,
     formState: { errors },
   } = useForm({
@@ -98,7 +96,7 @@ const ForgetMailPassword = ({ ...others }) => {
   });
 
   const onSubmit = (data) => {
-    console.log(JSON.stringify(data, null, 2));
+    // console.log(JSON.stringify(data, null, 2));
     setValues(data);
     // e.preventDefault();
     const resetLink = window.location.href.split("/").slice(0, -1).join("/");
@@ -162,7 +160,7 @@ const ForgetMailPassword = ({ ...others }) => {
                 >
                   <Grid item xs={4}>
                     <IconButton size="large">
-                      <img src={LoginIcon} />
+                      <img src={LoginIcon} alt="Login Icon" />
                     </IconButton>
                   </Grid>
                   <Grid item xs={8} style={{ marginTop: 5 }}>

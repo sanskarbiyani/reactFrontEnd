@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Chip,
   Link,
@@ -134,13 +134,13 @@ export function fileDownload(url, filename) {
   });
 }
 
-function importAll(r) {
-  let images = {};
-  r.keys().map((item) => {
-    images[item.replace("./", "")] = r(item);
-  });
-  return images;
-}
+// function importAll(r) {
+//   let images = {};
+//   r.keys().map((item) => {
+//     images[item.replace("./", "")] = r(item);
+//   });
+//   return images;
+// }
 
 function getName(value) {
   try {
@@ -154,17 +154,14 @@ export function DisplayDataEntry({ onChange }) {
   const connectedUsers = useSelector((state) => state.chat.otherUsers);
   let navigate = useNavigate();
   const dispatch = useDispatch();
-  const columsTypes = ["string", "boolean", "actions"];
   const [open, setOpen] = React.useState(false);
-  const [dateColumns, setDateColumns] = React.useState([]);
+  // const [dateColumns, setDateColumns] = React.useState([]);
   const gridApiRef = useGridApiRef();
   // const interval = useRef();
 
   const handleClose = () => {
     setOpen(false);
   };
-  const columns = [];
-  const collectionOfdata = [];
   const [appState, setAppState] = useState({
     loading: true,
     cols: null,
@@ -177,135 +174,111 @@ export function DisplayDataEntry({ onChange }) {
   // const [editRowsModel, setEditRowsModel] = React.useState({});
   const { enqueueSnackbar } = useSnackbar();
 
-  useEffect(() => {
-    console.log(dateColumns);
-  }, [dateColumns]);
+  // useEffect(() => {
+  //   console.log(dateColumns);
+  // }, [dateColumns]);
 
-  useEffect(() => {
-    console.log(appState.data);
-    return () => {
-      console.log("Deleting Data");
-    };
-  }, [appState.data]);
+  // useEffect(() => {
+  //   console.log(appState.data);
+  //   return () => {
+  //     console.log("Deleting Data");
+  //   };
+  // }, [appState.data]);
 
-  useEffect(() => {
-    console.log("Loading...");
-    if (appState.cols) {
-      const dateCols = appState.cols.map((col) => {
-        if (col.hasOwnProperty("type")) {
-          if (col["type"] === "dateTime") {
-            console.log("Date Time Field Found.");
-            console.log(col);
-            setDateColumns((prev) => {
-              return [...prev, col["field"]];
+  // useEffect(() => {
+  //   if (appState.cols) {
+  //     appState.cols.forEach((col) => {
+  //       if (col.hasOwnProperty("type")) {
+  //         if (col["type"] === "dateTime") {
+  //           setDateColumns((prev) => {
+  //             return [...prev, col["field"]];
+  //           });
+  //         }
+  //       }
+  //     });
+  //   }
+  //   // if (!appState.loading) {
+  //   //   console.log('Loading Completed.. Setting Interval');
+  //   //   const inter = setInterval(() => {
+  //   //     console.log('From Interval');
+  //   //     updateDateEntry();
+  //   //   }, 5000);
+
+  //   //   return () => {
+  //   //     console.log('Removing Interval');
+  //   //     clearInterval(inter);
+  //   //   }
+  //   // }
+  // }, [appState.loading, appState.cols]);
+
+  // const updateDateEntry = () => {
+  //   console.log(dateColumns);
+  //   console.log(gridApiRef.current.state);
+  // };
+
+  const handleCellEditCommit = React.useCallback(
+    async (params) => {
+      //  console.log(params.colDef.type)
+      try {
+        const config = { headers: { "Content-Type": "multipart/form-data" } };
+        let formData = new FormData();
+        if (params.colDef.type === "date")
+          formData.append(
+            params.field,
+            JSON.stringify(params.value).substring(1, 11)
+          );
+        else if (params.colDef.type === "dateTime") {
+          console.log(params.value);
+          console.log(typeof params.value);
+          formData.append(
+            params.field,
+            JSON.stringify(params.value).substring(1, 24)
+          );
+        } else if (typeof params.value == "object")
+          formData.append(params.field, JSON.stringify(params.value));
+        else formData.append(params.field, params.value);
+        // for (let [key, value] of formData.entries()) {
+        //   console.log(key, ':', value);
+        // }
+
+        axiosInstance
+          .put(
+            `models/getCellUpdate/${list_group["list"]}/abc/${params.id}/`,
+            formData,
+            config
+          )
+          .then((res) => {
+            enqueueSnackbar(`value Updated Successfully`, {
+              variant: "success",
             });
-          }
-        }
-      });
-    }
-    // if (!appState.loading) {
-    //   console.log('Loading Completed.. Setting Interval');
-    //   const inter = setInterval(() => {
-    //     console.log('From Interval');
-    //     updateDateEntry();
-    //   }, 5000);
-
-    //   return () => {
-    //     console.log('Removing Interval');
-    //     clearInterval(inter);
-    //   }
-    // }
-  }, [appState.loading]);
-
-  const updateDateEntry = () => {
-    console.log(dateColumns);
-    console.log(gridApiRef.current.state);
-  };
-
-  const handleCellEditCommit = React.useCallback(async (params) => {
-    //  console.log(params.colDef.type)
-    try {
-      const config = { headers: { "Content-Type": "multipart/form-data" } };
-      let formData = new FormData();
-      if (params.colDef.type === "date")
-        formData.append(
-          params.field,
-          JSON.stringify(params.value).substring(1, 11)
-        );
-      else if (params.colDef.type === "dateTime") {
-        console.log(params.value);
-        console.log(typeof params.value);
-        formData.append(
-          params.field,
-          JSON.stringify(params.value).substring(1, 24)
-        );
-      } else if (typeof params.value == "object")
-        formData.append(params.field, JSON.stringify(params.value));
-      else formData.append(params.field, params.value);
-      // for (let [key, value] of formData.entries()) {
-      //   console.log(key, ':', value);
-      // }
-
-      axiosInstance
-        .put(
-          `models/getCellUpdate/${list_group["list"]}/abc/${params.id}/`,
-          formData,
-          config
-        )
-        .then((res) => {
-          enqueueSnackbar(`value Updated Successfully`, {
-            variant: "success",
+          })
+          .catch((e) => {
+            enqueueSnackbar(`Please try again!!`, {
+              variant: "error",
+            });
           });
-        })
-        .catch((e) => {
-          enqueueSnackbar(`Please try again!!`, {
-            variant: "error",
-          });
-        });
-      // Make the HTTP request to save in the backend
-      // const response = await mutateRow({
-      //   id: params.id,
-      //   [params.field]: params.value,
-      // });
+        // Make the HTTP request to save in the backend
+        // const response = await mutateRow({
+        //   id: params.id,
+        //   [params.field]: params.value,
+        // });
 
-      // setSnackbar({ children: 'User successfully saved', severity: 'success' });
-      // setRows((prev) =>
-      //   prev.map((row) => (row.id === params.id ? { ...row, ...response } : row)),
-      // );
-    } catch (error) {
-      // setSnackbar({ children: 'Error while saving user', severity: 'error' });
-      // // Restore the row in case of error
-      // setRows((prev) => [...prev]);
-      navigate("/");
-    }
-  }, []);
-
-  const handleInterviewerClick = (event, email, candidate_name) => {
-    console.log("Clicked On Interviewer");
-    console.log(email);
-    console.log(candidate_name);
-    const newReceiver = connectedUsers.filter((user) => {
-      return user[0] === email;
-    });
-    if (!newReceiver.length) {
-      axiosInstance.get(`chat/getusername/${email}`).then((response) => {
-        response = response.data;
-        if (!response.is_online) response.is_online = false;
-        dispatch(setIsChatOpen(true));
-        dispatch(setReceiver([email, response.user_name, response.is_online]));
-      });
-    } else {
-      console.log(newReceiver[0]);
-      dispatch(setIsChatOpen(true));
-      dispatch(setReceiver(newReceiver[0]));
-    }
-  };
+        // setSnackbar({ children: 'User successfully saved', severity: 'success' });
+        // setRows((prev) =>
+        //   prev.map((row) => (row.id === params.id ? { ...row, ...response } : row)),
+        // );
+      } catch (error) {
+        // setSnackbar({ children: 'Error while saving user', severity: 'error' });
+        // // Restore the row in case of error
+        // setRows((prev) => [...prev]);
+        navigate("/");
+      }
+    },
+    [enqueueSnackbar, navigate, list_group]
+  );
 
   const PostLoadingComponent = ({ isLoading, ...props }) => {
     if (!appState.loading) {
-      console.log(
-        "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-      );
       return (
         <>
           <Header
@@ -444,7 +417,6 @@ export function DisplayDataEntry({ onChange }) {
                     pinnedColumns: { left: ["name"] },
                     value: appState.data,
                   }}
-                  onStateChange={(state) => console.log(state)}
                 />
               </Box>
             </Form>
@@ -475,6 +447,30 @@ export function DisplayDataEntry({ onChange }) {
   };
 
   useEffect(() => {
+    const columsTypes = ["string", "boolean", "actions"];
+    const columns = [];
+    const collectionOfdata = [];
+
+    const handleInterviewerClick = (event, email, candidate_name) => {
+      const newReceiver = connectedUsers.filter((user) => {
+        return user[0] === email;
+      });
+      if (!newReceiver.length) {
+        axiosInstance.get(`chat/getusername/${email}`).then((response) => {
+          response = response.data;
+          if (!response.is_online) response.is_online = false;
+          dispatch(setIsChatOpen(true));
+          dispatch(
+            setReceiver([email, response.user_name, response.is_online])
+          );
+        });
+      } else {
+        console.log(newReceiver[0]);
+        dispatch(setIsChatOpen(true));
+        dispatch(setReceiver(newReceiver[0]));
+      }
+    };
+
     let users = null;
     axiosInstance.get("user/alluser/").then((res) => {
       users = res.data;
@@ -537,9 +533,8 @@ export function DisplayDataEntry({ onChange }) {
           .then((res) => {
             const allFields = res.data;
             // let edit = true;
-
             // console.log(edit)
-            allFields.map((col) => {
+            allFields.forEach((col) => {
               // console.log(col.input_type)
               if (columsTypes.includes(col.input_type))
                 columns.push({
@@ -579,7 +574,7 @@ export function DisplayDataEntry({ onChange }) {
                     return params.value;
                   },
                   renderEditCell: (params) => {
-                    console.log(col);
+                    // console.log(col);
                     return (
                       <TextField
                         margin="dense"
@@ -615,6 +610,7 @@ export function DisplayDataEntry({ onChange }) {
                         >
                           {col.columns.extra_columns.map((rec, index) => {
                             try {
+                              // Change Required.
                               console.log(params.value[index][rec]);
                             } catch (err) {
                               if (params.value == null) params.value = {};
@@ -749,10 +745,10 @@ export function DisplayDataEntry({ onChange }) {
                           : false,
                       darkblue:
                         timee.length === 6
-                          ? timee[0] == 1 &&
+                          ? timee[0] === 1 &&
                             timee[2] <= 23 &&
                             timee[4] <= 59 &&
-                            timee[0] == 1 &&
+                            timee[0] === 1 &&
                             timee[2] >= 0 &&
                             timee[4] >= 0
                             ? true
@@ -766,19 +762,19 @@ export function DisplayDataEntry({ onChange }) {
                           : false,
                       green:
                         timee.length === 4
-                          ? timee[0] == 1 && timee[0] > 0
+                          ? timee[0] === 1 && timee[0] > 0
                             ? true
                             : false
                           : false,
                       orange:
                         timee.length === 4
-                          ? timee[0] == 0 && timee[2] >= 30
+                          ? timee[0] === 0 && timee[2] >= 30
                             ? true
                             : false
                           : false,
                       yellow:
                         timee.length === 4
-                          ? timee[0] == 0 && timee[2] < 30
+                          ? timee[0] === 0 && timee[2] < 30
                             ? true
                             : false
                           : false,
@@ -877,8 +873,8 @@ export function DisplayDataEntry({ onChange }) {
                     return params.value;
                   },
                   valueFormatter: (params) => {
-                    let url = null;
-                    let urlname = null;
+                    // let url = null;
+                    // let urlname = null;
                     try {
                       return params.value[0]["url"];
                     } catch (err) {
@@ -961,7 +957,7 @@ export function DisplayDataEntry({ onChange }) {
                                   } catch (err) {
                                     newValue = {};
                                     newValue = Object.assign(newValue, {
-                                      [0]: { ["url"]: e.target.value },
+                                      0: { url: e.target.value },
                                     });
                                   }
 
@@ -996,7 +992,7 @@ export function DisplayDataEntry({ onChange }) {
                                     } catch (err) {
                                       newValue = {};
                                       newValue = Object.assign(newValue, {
-                                        [0]: { ["urlname"]: e.target.value },
+                                        0: { urlname: e.target.value },
                                       });
                                     }
                                     api.setEditCellValue({
@@ -1134,9 +1130,9 @@ export function DisplayDataEntry({ onChange }) {
                           overflowY: "auto",
                         }}
                         onChange={(_event, selected) => {
-                          const { id, api, field, value } = params;
-                          const newValue = value;
-                          console.log(value);
+                          const { id, api, field } = params;
+                          // const newValue = value;
+                          // console.log(value);
                           // newValue[index][rec] = selected;
 
                           api.setEditCellValue({ id, field, value: selected });
@@ -1181,16 +1177,16 @@ export function DisplayDataEntry({ onChange }) {
                   },
                 });
               } else if (col.input_type === "choice") {
-                const images = importAll(
-                  require.context(
-                    "../../assets/Icons for List",
-                    false,
-                    /\.(png|jpe?g|svg)$/
-                  )
-                );
+                // const images = importAll(
+                //   require.context(
+                //     "../../assets/Icons for List",
+                //     false,
+                //     /\.(png|jpe?g|svg)$/
+                //   )
+                // );
                 const options = [];
                 const all = [];
-                Object.entries(col.columns["choices"]).map((ch) => {
+                Object.entries(col.columns["choices"]).forEach((ch) => {
                   options.push(ch[1]["name"]);
                   all.push(ch[1]);
                 });
@@ -1249,11 +1245,11 @@ export function DisplayDataEntry({ onChange }) {
                   },
                   renderCell: (params) => {
                     const val = all.filter(
-                      (rec) => rec["name"] == params.value
+                      (rec) => rec["name"] === params.value
                     )[0];
                     if (val === undefined) {
                       const val = all.filter(
-                        (rec) => rec["name"] == col.columns.default_val
+                        (rec) => rec["name"] === col.columns.default_val
                       )[0];
 
                       return (
@@ -1290,7 +1286,7 @@ export function DisplayDataEntry({ onChange }) {
                   },
                 });
               } else {
-                console.log("Refresh");
+                // console.log("Refresh");
               }
             });
             if (editt) {
@@ -1317,19 +1313,19 @@ export function DisplayDataEntry({ onChange }) {
               });
             }
             // setValues([...columns])
-            let nextIndex = 1;
+            // let nextIndex = 1;
             //Data
             axiosInstance
               .get(`models/single/${list_group["list"]}/${list_group["group"]}`)
               .then((res) => {
                 const allData = res.data;
 
-                allData.map((data) => {
+                allData.forEach((data) => {
                   // console.log(data)
                   // if (typeof (data) === 'object')
                   //   console.log(Object.keys(data))
                   collectionOfdata.push(data);
-                  nextIndex++;
+                  // nextIndex++;
                 });
                 // console.log(nextIndex);
 
@@ -1349,15 +1345,15 @@ export function DisplayDataEntry({ onChange }) {
                     let agg = [];
                     let data = [];
                     let rows = [];
-                    allFields.map((col) => {
+                    allFields.forEach((col) => {
                       // console.log(col)
                       if (
-                        (col.input_type == "number" &&
-                          data.indexOf(col.name) == -1) ||
-                        (col.input_type == "currency" &&
-                          data.indexOf(col.name) == -1)
+                        (col.input_type === "number" &&
+                          data.indexOf(col.name) === -1) ||
+                        (col.input_type === "currency" &&
+                          data.indexOf(col.name) === -1)
                       ) {
-                        collectionOfdata.map((d) => {
+                        collectionOfdata.forEach((d) => {
                           agg.push(
                             d[col.name.replaceAll(/ /g, "_").toLowerCase()]
                           );
@@ -1379,7 +1375,7 @@ export function DisplayDataEntry({ onChange }) {
                         agg = [];
                       }
                     });
-                    console.log(rows);
+                    // console.log(rows);
                     setAppState({
                       loading: false,
                       listHistory: [ress.data],
@@ -1407,7 +1403,7 @@ export function DisplayDataEntry({ onChange }) {
         console.log(e);
         alert("You Are Not Auth");
       });
-  }, [setAppState]);
+  }, [setAppState, list_group, navigate, dispatch, connectedUsers]);
 
   // useEffect(() => {
   //   let active = true;

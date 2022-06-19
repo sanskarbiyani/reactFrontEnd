@@ -188,7 +188,8 @@ export function DisplaylogEnties({ onChange }) {
           console.log(e);
         });
     });
-  }, [setAppState]);
+  }, [setAppState, listname]);
+
   return (
     <div className="App">
       <PostLoadingComponent

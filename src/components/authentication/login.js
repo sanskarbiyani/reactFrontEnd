@@ -29,51 +29,52 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 // assets
 import LoginIcon from "../../assets/AuthIcon/Login.svg";
 import { yupResolver } from "@hookform/resolvers/yup";
-import makeStyles from "@mui/styles/makeStyles";
 import { TextField } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { NavLink } from "react-router-dom";
-const lightColor = "rgba(255, 255, 255, 0.7)";
-const useStyles = makeStyles((theme) => ({
-  header: {
-    padding: 8,
-    background: "white",
-    color: "#212121",
-  },
-  margin: {
-    margin: theme.spacing(1),
-  },
-  menuButton: {
-    marginLeft: -theme.spacing(4),
-  },
-  iconButtonAvatar: {
-    padding: 3,
-  },
-  link: {
-    textDecoration: "none",
-    color: theme.palette.common.black,
-    minWidth: 40,
-    "&:hover": {
-      color: theme.palette.error.main,
-      boxShadow: 2,
-      //  text-shadow: .1em .1em .2em rgba(0, 0, 0, 0.6),
-    },
-  },
-  tab: {
-    marginLeft: 25,
-    textColor: theme.palette.error.main,
-    indicator: theme.palette.error.main,
-    "& .MuiTabs-indicator": {
-      backgroundColor: theme.palette.error.main,
-    },
-  },
-  button: {
-    borderColor: lightColor,
-  },
-  hov: {
-    margin: theme.spacing(0),
-  },
-}));
+
+// import makeStyles from "@mui/styles/makeStyles";
+// const lightColor = "rgba(255, 255, 255, 0.7)";
+// const useStyles = makeStyles((theme) => ({
+//   header: {
+//     padding: 8,
+//     background: "white",
+//     color: "#212121",
+//   },
+//   margin: {
+//     margin: theme.spacing(1),
+//   },
+//   menuButton: {
+//     marginLeft: -theme.spacing(4),
+//   },
+//   iconButtonAvatar: {
+//     padding: 3,
+//   },
+//   link: {
+//     textDecoration: "none",
+//     color: theme.palette.common.black,
+//     minWidth: 40,
+//     "&:hover": {
+//       color: theme.palette.error.main,
+//       boxShadow: 2,
+//       //  text-shadow: .1em .1em .2em rgba(0, 0, 0, 0.6),
+//     },
+//   },
+//   tab: {
+//     marginLeft: 25,
+//     textColor: theme.palette.error.main,
+//     indicator: theme.palette.error.main,
+//     "& .MuiTabs-indicator": {
+//       backgroundColor: theme.palette.error.main,
+//     },
+//   },
+//   button: {
+//     borderColor: lightColor,
+//   },
+//   hov: {
+//     margin: theme.spacing(0),
+//   },
+// }));
 
 const schema = yup.object().shape({
   email: yup
@@ -88,13 +89,13 @@ const UserLogin = ({ ...others }) => {
   const dispatch = useDispatch();
   // const customization = useSelector((state) => state.customization);
 
-  const classes = useStyles();
-  const [checked, setChecked] = useState(true);
+  // const classes = useStyles();
+  // const [checked, setChecked] = useState(true);
   const { enqueueSnackbar } = useSnackbar();
-  const googleHandler = async () => {
-    console.error("Login");
-  };
-  const user = JSON.parse(localStorage.getItem("user"));
+  // const googleHandler = async () => {
+  //   console.error("Login");
+  // };
+  // const user = JSON.parse(localStorage.getItem("user"));
   const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
@@ -113,7 +114,6 @@ const UserLogin = ({ ...others }) => {
   const {
     register,
     handleSubmit,
-    setValue,
     control,
     formState: { errors },
   } = useForm({
@@ -130,7 +130,7 @@ const UserLogin = ({ ...others }) => {
   });
 
   const onSubmit = (data) => {
-    console.log(JSON.stringify(data, null, 2));
+    // console.log(JSON.stringify(data, null, 2));
     setValues(data);
     // e.preventDefault();
 
@@ -145,7 +145,7 @@ const UserLogin = ({ ...others }) => {
         localStorage.setItem("refresh_token", res.data.refresh);
         axiosInstance.defaults.headers["Authorization"] =
           "JWT " + localStorage.getItem("access_token");
-        console.log(res.data);
+        // console.log(res.data);
 
         navigate("/");
         dispatch({ type: IS_USER, isUser: { isLoggedIn: true, user: data } });
@@ -178,7 +178,7 @@ const UserLogin = ({ ...others }) => {
                 >
                   <Grid item xs={4}>
                     <IconButton size="large">
-                      <img src={LoginIcon} />
+                      <img src={LoginIcon} alt="Login Icon" />
                     </IconButton>
                   </Grid>
                   <Grid item xs={8} style={{ marginTop: 5 }}>
